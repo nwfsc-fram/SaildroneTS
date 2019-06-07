@@ -8,7 +8,7 @@ Software for querying the Saildrone API
 
 3. Clone the repository: `git clone git@github.com:nwfsc-fram/SaildroneTS.git`
 
-4. In a command window, navigate to the clone folder and install the required node modules:  `npm install`
+4. In a command window, navigate to the cloned folder and install the required node modules:  `npm install`
 
 5. Copy the `keys-sample.ts` file to a `keys.ts` file and insert your key and secret values received from Saildrone.
 
