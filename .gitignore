@@ -1,1 +1,6 @@
 keys.ts
+
+**/node_modules
+**/output
+**/logs
+**/.history
