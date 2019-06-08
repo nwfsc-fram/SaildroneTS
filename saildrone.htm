@@ -1,0 +1,121 @@
+<html>
+<title>Saildrone Data Download</title>
+<head>
+    <meta http-equiv="refresh" content="30">
+    <script src="easytimer.min.js"></script>
+    <script type="module" >
+        import { latestUpdate } from './saildrone/lastUpdatedDateTime.js';
+        lastUpdate = new Date(latestUpdate());
+    </script>
+</head>
+<style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 60%;
+}
+
+td, th {
+  border: 1px solid #f5f5f5;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #f5f5f5;
+}
+h2, p, span {
+  font-family: arial, sans-serif;
+}
+h2 { display: inline; }
+</style>
+
+<script>
+
+// Global Variables
+var lastUpdate, nextUpdate;
+var datasets = ["vehicle", "oceanographic", "atmospheric", "biogeochemical"];
+var missions = ["1040", "1042", "1043", "1044", "1045", "1046", "1047"];
+
+function populateData() {
+
+    var counterID = document.getElementById("counter");
+    var timer = new easytimer.Timer();
+    timer.start({countdown: true, startValues: {seconds: 30}});
+    counterID.innerHTML = timer.getTimeValues().seconds;
+    timer.addEventListener('secondsUpdated', function (e) {
+        counterID.innerHTML = timer.getTimeValues().seconds;
+    });
+    timer.addEventListener('targetAchieved', function (e) {
+        counterID.innerHTML = 'REFRESHING ...';
+    });
+
+    nextUpdate = new Date(lastUpdate);
+    var nextUpdateID = document.getElementById("nextUpdate");
+    nextUpdate.setMinutes(nextUpdate.getMinutes() + 30);
+    nextUpdateID.innerHTML = formatDateTime(nextUpdate);
+
+    lastUpdate = formatDateTime(lastUpdate);
+    var lastUpdateTimeID = document.getElementById("lastUpdateDateTime");
+    lastUpdateTimeID.innerHTML = lastUpdate;
+
+    var newRow, newCell, newText, newLink;
+    var table = document.getElementById("dataTable").getElementsByTagName('tbody')[0];
+    missions.forEach(x => {
+        datasets.forEach(y => {
+            newRow = table.insertRow(table.rows.length);
+
+            missionCell = newRow.insertCell(0);
+            missionText = document.createTextNode(x);
+            missionCell.appendChild(missionText);
+
+            datasetCell = newRow.insertCell(1);
+            datasetText = document.createTextNode(titleCase(y));
+            datasetCell.appendChild(datasetText);
+
+            dateTimeCell = newRow.insertCell(2);
+            dateTimeText = document.createTextNode(lastUpdate);
+            dateTimeCell.appendChild(dateTimeText);
+
+            linkCell = newRow.insertCell(3);
+            newLink = document.createElement('a');
+            linkText = document.createTextNode("Link");
+            newLink.appendChild(linkText);
+            newLink.setAttribute("href", "./saildrone/" + x + "_" + y + ".csv");
+            linkCell.appendChild(newLink);
+        });
+    });
+}
+
+function formatDateTime(dateTime) {
+    var dt = new Date(dateTime);     // get string of last modified date
+    return dt.getMonth()+1 + "/" + dt.getDate() + "/" + dt.getFullYear() + " " +
+        dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
+}
+
+function titleCase(word) {
+    return word.charAt(0).toUpperCase() + word.slice(1);
+}
+
+</script>
+<body onLoad="populateData();">
+    
+    <h2>Saildrone Data Download</h2>
+    <p id="refresh">Page will refresh in <span id="counter"></span> seconds</p>
+    <p>Data Last Updated: <span id="lastUpdateDateTime"></span></p>
+    <p>Data is downloaded every 30 minutes.  Next update will happen at <span id="nextUpdate"></span></p>
+    <p>Download All Data: <a href="./saildrone/all_data.zip">Link</a></p>
+    <table id="dataTable">
+        <thead>
+            <tr>
+                <th>Mission</th>
+                <th>Dataset</th>
+                <th>Last Update Date/Time</th>
+                <th>Download</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</body>
+</html>

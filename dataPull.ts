@@ -1,9 +1,11 @@
-import { writeFileSync, appendFileSync, existsSync, mkdirSync, copyFileSync } from 'fs';
+import { writeFileSync, appendFileSync, existsSync, mkdirSync, createWriteStream, renameSync, unlinkSync } from 'fs';
 import * as path from 'path';
 import Axios from 'axios';
 import * as json2csv from 'json2csv';
 import { logger } from './logger';
 import * as moment from 'moment-timezone';
+import * as yazl from 'yazl';
+import * as fg from 'fast-glob';
 
 import { saildroneUrl, missions, dataSets, queryRangeInMinutes, timeZone, timeOutputFormat, 
     outputFolder, timeRangeTest } from './parameters';
@@ -130,19 +132,13 @@ export async function getData() {
                     }
                     appendFileSync(masterFullPath, csv);
 
-                    // if (existsSync(masterFullPath)) {
-                        // let csv = json2csv.Parser({header: false}).parse(data);
-                        // csv = csv.slice(1);  // Remove the first row of the csv array that contains the column names
-                        
-                    //     appendFileSync(masterFullPath, csv);
-                    // } else {
-                    //     writeFileSync(masterFullPath, csv);
-                    // }
+                    // Add the new master file to the zip file
+                    // zip.file(masterFullPath);
 
                     // Copy the File for Chu
-                    let userMasterFilename = mission + '_' + dataSet + '_for_users.csv';
-                    let userMasterFullPath = path.join(__dirname, outputFolder, userMasterFilename);                    
-                    copyFileSync(masterFullPath, userMasterFullPath);
+                    // let userMasterFilename = mission + '_' + dataSet + '_for_users.csv';
+                    // let userMasterFullPath = path.join(__dirname, outputFolder, userMasterFilename);                    
+                    // copyFileSync(masterFullPath, userMasterFullPath);
 
                     // Write the metdata file
                     let metadataFilename = mission + '_metadata.json';
@@ -150,10 +146,35 @@ export async function getData() {
                     if (!existsSync(metadataFullPath)) {
                         writeFileSync(metadataFullPath, JSON.stringify(metadata));
                     }
+                    // zip.file(metadataFullPath);
+
+                    let updateDateTimeName = "lastUpdatedDateTime.js";
+                    let updatedFullPath = path.join(outputFolder, updateDateTimeName);
+                    let mjsText = "export function latestUpdate() { return '" + new Date() + "'; }";
+                    writeFileSync(updatedFullPath, mjsText);
                 })
                 logger.info(`\tmission ${mission} data files written`);
             })
-            logger.info('Data pull completed\n');
+            logger.info('Data pull completed');
+
+            // Delete the old zip file if it exists
+            if (existsSync(path.join(__dirname, outputFolder, "all_data.zip"))) {
+                unlinkSync(path.join(__dirname, outputFolder, "all_data.zip"));
+            }
+
+            // Generate the zip file
+            let zipFile = new yazl.ZipFile();
+            let csvFiles = fg.sync([outputFolder + '/**/*.csv', 
+                outputFolder + '/**/*.json'], {nocase: true, deep: 0}
+            );
+            csvFiles.forEach(x => {
+                zipFile.addFile(x, x.split("/").pop());
+                logger.info(`\tzipping ${x}`)
+            })
+            zipFile.outputStream.pipe(createWriteStream(path.join(__dirname, outputFolder, "all_data.zip"))).on("close", function() {
+                logger.info("Zip file written\n");
+            });
+            zipFile.end();
         }
     }
 }
