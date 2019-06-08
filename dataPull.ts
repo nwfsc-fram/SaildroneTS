@@ -92,24 +92,21 @@ export async function getData() {
 
                 dataSets.forEach(async dataSet => {
                     logger.info(`\t${dataSet}`);
+
+                    // Pull the mission / dataset time series
                     let response = await getTimeSeriesData(authToken['token'], mission, dataSet, queryRangeInMinutes);
                     let data = response['data'];
                     let metadata = response['meta'];
                     let fields = Object.keys(metadata["units"]).toString().split(',');
-                    // console.info(`fields = ${JSON.stringify(fields)}\n`);
-                    // console.info(`data = ${JSON.stringify(data)}\n`);
 
                     // Convert the Epoch time to ISO-8601 time
                     data = data.map((x: number) => {
                         x['gps_time'] = moment.unix(x['gps_time']).tz(timeZone).format(timeOutputFormat);
                         return x;
                     })
-                    // console.info(`data after date/time conversion = ${JSON.stringify(data)}\n`);
 
                     // Convert the JSON data to a csv - csv will include the columns headers
-                    // let csv = json2csv.parse({'data': data, 'fields': fields});
                     let csv = json2csv.parse(data);
-                    // console.info(`data after parsing to csv: ${csv}`);
 
                     // Write the update file
                     let subfolder = path.join(__dirname, outputFolder, mission)
@@ -125,15 +122,9 @@ export async function getData() {
                     let masterFullPath = path.join(__dirname, outputFolder, masterFilename);
                     if (existsSync(masterFullPath)) {
                         // Drop the first line of header information
-                        // let lines = csv.split('\n');
-                        // lines.splice(0,1);
-                        // csv = lines.join('\n');
                         csv = "\n" + csv.substring(csv.indexOf("\n") + 1);
                     }
                     appendFileSync(masterFullPath, csv);
-
-                    // Add the new master file to the zip file
-                    // zip.file(masterFullPath);
 
                     // Copy the File for Chu
                     // let userMasterFilename = mission + '_' + dataSet + '_for_users.csv';
@@ -146,8 +137,8 @@ export async function getData() {
                     if (!existsSync(metadataFullPath)) {
                         writeFileSync(metadataFullPath, JSON.stringify(metadata));
                     }
-                    // zip.file(metadataFullPath);
 
+                    // Update the last updated date time information, for use by the saildrone.htm webpage
                     let updateDateTimeName = "lastUpdatedDateTime.js";
                     let updatedFullPath = path.join(outputFolder, updateDateTimeName);
                     let mjsText = "export function latestUpdate() { return '" + new Date() + "'; }";
@@ -164,6 +155,8 @@ export async function getData() {
 
             // Generate the zip file
             let zipFile = new yazl.ZipFile();
+
+            // Get a listing of all of the files of interest and add to the zip file
             let csvFiles = fg.sync([outputFolder + '/**/*.csv', 
                 outputFolder + '/**/*.json'], {nocase: true, deep: 0}
             );
@@ -171,6 +164,8 @@ export async function getData() {
                 zipFile.addFile(x, x.split("/").pop());
                 logger.info(`\tzipping ${x}`)
             })
+
+            // Finalize the zip file
             zipFile.outputStream.pipe(createWriteStream(path.join(__dirname, outputFolder, "all_data.zip"))).on("close", function() {
                 logger.info("Zip file written\n");
             });
