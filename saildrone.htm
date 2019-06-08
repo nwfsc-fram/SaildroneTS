@@ -89,8 +89,13 @@ function populateData() {
 
 function formatDateTime(dateTime) {
     var dt = new Date(dateTime);     // get string of last modified date
-    return dt.getMonth()+1 + "/" + dt.getDate() + "/" + dt.getFullYear() + " " +
-        dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
+    return padZeroes(dt.getMonth()+1) + "/" + padZeroes(dt.getDate()) + "/" + dt.getFullYear() + " " +
+        padZeroes(dt.getHours()) + ":" + padZeroes(dt.getMinutes()) + ":" + padZeroes(dt.getSeconds());
+}
+
+function padZeroes(value) {
+    if (value < 10) return "0" + value;
+    return value;
 }
 
 function titleCase(word) {
