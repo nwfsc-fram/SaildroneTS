@@ -32,8 +32,9 @@ extract:
 	## make container + extract tarball
 	-docker rm -f ${docker_image}
 	docker create --name ${docker_image} ${docker_image}
+	
 	# TODO: Copy versioning files
-	docker cp ${docker_image}:/root/saildronets.tgz .
+	docker cp ${docker_image}:/root/saildrone-data-pull.tgz .
 
 	# clean up
 	docker rm -f ${docker_image}

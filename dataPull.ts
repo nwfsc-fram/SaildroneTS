@@ -43,8 +43,8 @@ export async function getTimeSeriesData(authToken: string, mission: string, data
     let timeSeriesEndpoint = 'v1/timeseries/' + mission;
     let timeSeriesUrl = saildroneUrl + timeSeriesEndpoint;
 
-    let startDate = moment().subtract(queryTime, 'minutes').format();
-    let endDate = moment().format();
+    let startDate = moment().subtract(queryTime, 'minutes').format();   // subtract minutes from now to start the query
+    let endDate = moment().format();    // now
 
     if (timeRangeTest) {
         startDate = moment("2019-05-31T16:00:00.000").format();
@@ -68,7 +68,7 @@ export async function getTimeSeriesData(authToken: string, mission: string, data
         return response.data;
     
     } catch {
-        console.info(`Error in querying time series`);
+        // console.info(`Error in querying time series`);
         return null;
     }
 }
@@ -95,6 +95,10 @@ export async function getData() {
 
                     // Pull the mission / dataset time series
                     let response = await getTimeSeriesData(authToken['token'], mission, dataSet, queryRangeInMinutes);
+                    if (response === null) {
+                        logger.info(`\tdata not available for mission ${mission} ${dataSet}, skipping...`);
+                        return;
+                    }
                     let data = response['data'];
                     let metadata = response['meta'];
                     let fields = Object.keys(metadata["units"]).toString().split(',');

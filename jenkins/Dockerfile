@@ -19,5 +19,8 @@ ADD keys.ts SaildroneTS/keys.ts
 # Perform the data pull
 RUN ts-node -T SaildroneTS/dataPull.ts
 
+# Package saildrone-data-pull directory
+RUN tar czvf saildrone-data-pull.tgz SaildroneTS
+
 # Copy the all_data.zip file to nwcwp2  /var/www/html/app-warehouse/static/saildrone and unzip
-#RUN cd SaildroneTS/output && tar czf all_data.zip
+# RUN cd SaildroneTS/output && tar czf all_data.zip

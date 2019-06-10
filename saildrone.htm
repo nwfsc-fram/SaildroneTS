@@ -39,6 +39,7 @@ var missions = ["1040", "1042", "1043", "1044", "1045", "1046", "1047"];
 
 function populateData() {
 
+    // Configure the 30s countdown
     var counterID = document.getElementById("counter");
     var timer = new easytimer.Timer();
     timer.start({countdown: true, startValues: {seconds: 30}});
@@ -50,11 +51,35 @@ function populateData() {
         counterID.innerHTML = 'REFRESHING ...';
     });
 
+    // Configure the Clock
+    var clockID = document.getElementById("clock");
+    var clock = new easytimer.Timer();
+    var now = new Date();
+    clock.start({precision: 'seconds', 
+        startValues: {hours: now.getHours(), minutes: now.getMinutes(), seconds: now.getSeconds()}});
+    clock.addEventListener('secondsUpdated', function (e) {
+        clockID.innerHTML = clock.getTimeValues().toString();
+    })
+
+    // Configure the nextUpdate
     nextUpdate = new Date(lastUpdate);
     var nextUpdateID = document.getElementById("nextUpdate");
     nextUpdate.setMinutes(nextUpdate.getMinutes() + 30);
     nextUpdateID.innerHTML = formatDateTime(nextUpdate);
 
+    // Configure the remaining time
+    var remainingTimeID = document.getElementById('remainingTime');
+    var remainingTimer = new easytimer.Timer();
+    remainingTimer.start({countdown: true, precision: 'seconds', 
+        startValues: {hours: nextUpdate.getHours() - clock.getTimeValues().hours,
+        minutes: nextUpdate.getMinutes() - clock.getTimeValues().minutes,
+        seconds: nextUpdate.getSeconds() - clock.getTimeValues().seconds}
+    });
+    remainingTimer.addEventListener('secondsUpdated', function (e) {
+        remainingTimeID.innerHTML = remainingTimer.getTimeValues().toString();
+    })
+
+    // Configure the lastUpdate
     lastUpdate = formatDateTime(lastUpdate);
     var lastUpdateTimeID = document.getElementById("lastUpdateDateTime");
     lastUpdateTimeID.innerHTML = lastUpdate;
@@ -108,8 +133,9 @@ function titleCase(word) {
     <h2>Saildrone Data Download</h2>
     <p id="refresh">Page will refresh in <span id="counter"></span> seconds</p>
     <p>Data Last Updated: <span id="lastUpdateDateTime"></span></p>
-    <p>Data is downloaded every 30 minutes.  Next update will happen at <span id="nextUpdate"></span></p>
-    <p>Download All Data: <a href="./saildrone/all_data.zip">Link</a></p>
+    <p>Data is downloaded every 30 minutes.  Next update will happen at <span id="nextUpdate"></span>.  Current Time: <span id="clock"></span></p>
+    <!-- <p>Time until next update: <span id="remainingTime"></span></p> -->
+    <p>Download All Data: <a href="./saildrone/all_data.zip">Link</a></p>    
     <table id="dataTable">
         <thead>
             <tr>
