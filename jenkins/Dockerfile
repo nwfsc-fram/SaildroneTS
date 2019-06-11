@@ -11,6 +11,8 @@ WORKDIR /root
 #ADD SaildroneTS ./SaildroneTS
 ADD . .
 
+RUN npm install -g ts-node
+
 # Install Node modules
 RUN npm install
 
@@ -21,7 +23,7 @@ RUN ls -lha
 RUN npm list ts-node
 
 # Perform the data pull
-RUN ./ts-node -T ./dataPull.ts
+RUN ts-node -T ./dataPull.ts
 
 # Package saildrone-data-pull directory
 RUN tar czvf saildrone-data-pull.tgz SaildroneTS
