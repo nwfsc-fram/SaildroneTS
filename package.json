@@ -19,7 +19,9 @@
     "babel-cli": "^6.26.0",
     "del-cli": "^1.1.0",
     "lerna": "^3.13.4",
-    "tar": ">=4.4.2"
+    "tar": ">=4.4.2",
+    "ts-node": "^8.0.3",
+    "typescript": "^3.3.4000",
   },
   "dependencies": {
     "@types/jszip": "^3.1.6",
@@ -34,8 +36,6 @@
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.23",
     "node-cron": "^2.0.3",
-    "ts-node": "^8.0.3",
-    "typescript": "^3.3.4000",
     "yazl": "^2.5.1"
   }
 }
