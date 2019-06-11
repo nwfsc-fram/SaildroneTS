@@ -9,6 +9,7 @@ WORKDIR /root
 
 # Add SaildroneTS source files
 #ADD SaildroneTS ./SaildroneTS
+ADD . .
 
 # Install Node modules
 RUN npm install
