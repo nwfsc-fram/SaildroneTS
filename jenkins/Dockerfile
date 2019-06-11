@@ -15,10 +15,11 @@ ADD . .
 RUN npm install
 
 # Add keys.ts file for authentication
-ADD keys.ts keys.ts
+#ADD keys.ts keys.ts
+RUN ls -lha
 
 # Perform the data pull
-RUN ts-node -T ./dataPull.ts
+RUN ./ts-node -T ./dataPull.ts
 
 # Package saildrone-data-pull directory
 RUN tar czvf saildrone-data-pull.tgz SaildroneTS
