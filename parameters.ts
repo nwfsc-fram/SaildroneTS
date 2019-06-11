@@ -1,9 +1,9 @@
 // Query Parameters
 export let saildroneUrl = 'https://developer-mission.saildrone.com/';   // Saildrone API URL
-// export let missions: string[] = ["1023"];                            // Saildrone missions to query
-export let missions: string[] = [
-    "1040", "1042", "1043", "1044", "1045", "1046", "1047"
-];
+export let missions: string[] = ["1023"];                            // Saildrone missions to query
+// export let missions: string[] = [
+//     "1040", "1042", "1043", "1044", "1045", "1046", "1047"
+// ];
 export let dataSets: string[] = ["vehicle", "atmospheric",              // Datasets to query
                                  "oceanographic", "biogeochemical"];
 
@@ -14,4 +14,4 @@ export let outputFolder = './output';                                   // Where
 export let logFolder = './logs';
 
 // Testing purposes only - set to false for real operations
-export let timeRangeTest: boolean = false;
+export let timeRangeTest: boolean = true;

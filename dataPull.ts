@@ -136,7 +136,7 @@ export async function getData() {
                     // copyFileSync(masterFullPath, userMasterFullPath);
 
                     // Write the metdata file
-                    let metadataFilename = mission + '_metadata.json';
+                    let metadataFilename = mission + '_' + dataSet + '_metadata.json';
                     let metadataFullPath = path.join(outputFolder, metadataFilename);
                     if (!existsSync(metadataFullPath)) {
                         writeFileSync(metadataFullPath, JSON.stringify(metadata));
@@ -161,7 +161,8 @@ export async function getData() {
             let zipFile = new yazl.ZipFile();
 
             // Get a listing of all of the files of interest and add to the zip file
-            let csvFiles = fg.sync([outputFolder + '/**/*.csv', 
+            let csvFiles = fg.sync([
+                outputFolder + '/**/*.csv', 
                 outputFolder + '/**/*.json'], {nocase: true, deep: 0}
             );
             csvFiles.forEach(x => {

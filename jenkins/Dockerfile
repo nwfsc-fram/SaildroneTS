@@ -14,13 +14,15 @@ ADD SaildroneTS ./SaildroneTS
 RUN cd SaildroneTS && npm install
 
 # Add keys.ts file for authentication
-ADD keys.ts SaildroneTS/keys.ts
+ADD keys.ts keys.ts
 
 # Perform the data pull
-RUN ts-node -T SaildroneTS/dataPull.ts
+RUN ts-node -T ./dataPull.ts
 
 # Package saildrone-data-pull directory
 RUN tar czvf saildrone-data-pull.tgz SaildroneTS
+
+# Package the all_data.zip file for pushing to 
 
 # Copy the all_data.zip file to nwcwp2  /var/www/html/app-warehouse/static/saildrone and unzip
 # RUN cd SaildroneTS/output && tar czf all_data.zip
