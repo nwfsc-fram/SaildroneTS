@@ -8,10 +8,10 @@ LABEL maintainer="FRAM Data Team <nmfs.nwfsc.fram.data.team@noaa.gov>"
 WORKDIR /root
 
 # Add SaildroneTS source files
-ADD SaildroneTS ./SaildroneTS
+#ADD SaildroneTS ./SaildroneTS
 
 # Install Node modules
-RUN cd SaildroneTS && npm install
+RUN npm install
 
 # Add keys.ts file for authentication
 ADD keys.ts keys.ts
