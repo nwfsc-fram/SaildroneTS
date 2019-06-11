@@ -18,6 +18,8 @@ RUN npm install
 #ADD keys.ts keys.ts
 RUN ls -lha
 
+RUN npm list ts-node
+
 # Perform the data pull
 RUN ./ts-node -T ./dataPull.ts
 
