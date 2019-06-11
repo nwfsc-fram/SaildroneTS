@@ -2,7 +2,7 @@
 
 #FROM electronuserland/builder:wine-05.18
 FROM node:10
-LABEL maintainer="FRAM Data Team <nmfs.nwfsc.fram.data.team@noaa.gov>""
+LABEL maintainer="FRAM Data Team <nmfs.nwfsc.fram.data.team@noaa.gov>"
 
 # build everything in the root home directory
 WORKDIR /root
