@@ -20,8 +20,6 @@ RUN cd SaildroneTS && npm install
 # See what is in the directory at this point
 RUN ls -lha
 
-RUN cd ..
-
 # Copy all_data.zip to the root folder
 RUN cp ./SaildroneTS/output/all_data.zip .
 
