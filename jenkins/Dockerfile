@@ -22,6 +22,9 @@ RUN ls -lha
 
 RUN cd ..
 
+# Copy all_data.zip to the root folder
+RUN cp ./SaildroneTS/output/all_data.zip .
+
 # Package saildrone-data-pull directory
 RUN tar -cvzf saildrone-data-pull.tgz SaildroneTS --warning=no-file-changed \
     --exclude='./.npm' --exclude='./logs' --exclude='./.git' \
