@@ -11,7 +11,7 @@ WORKDIR /root
 #ADD SaildroneTS ./SaildroneTS
 ADD . .
 
-RUN npm install -g typescript@>=2.0
+RUN npm install -g typescript
 
 RUN npm install -g ts-node
 
