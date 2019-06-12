@@ -29,7 +29,7 @@ RUN ts-node -T ./dataPull.ts
 RUN ls -lha
 
 # Package saildrone-data-pull directory
-RUN tar czvf --warning=no-file-changed saildrone-data-pull.tgz .
+RUN tar -cvzf saildrone-data-pull.tgz . --warning=no-file-changed
 
 
 #--exclude=\'logs\' --exclude=\'.git\' \
