@@ -10,14 +10,12 @@ WORKDIR /root
 # Add SaildroneTS source files to the docker instance
 ADD ./SaildroneTS SaildroneTS
 
-RUN cd SaildroneTS
-
 RUN npm install -g typescript
 
 RUN npm install -g ts-node
 
 # Install Node modules
-RUN npm install
+RUN cd SaildroneTS && npm install
 
 # See what is in the directory at this point
 RUN ls -lha
