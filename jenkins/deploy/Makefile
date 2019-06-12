@@ -34,7 +34,7 @@ extract:
 	docker create --name ${docker_image} ${docker_image}
 	
 	# TODO: Copy versioning files
-	docker cp ${docker_image}:/root/saildrone-data-pull.tgz .
+	docker cp ${docker_image}:/root/all_data.zip .
 
 	# clean up
 	docker rm -f ${docker_image}
