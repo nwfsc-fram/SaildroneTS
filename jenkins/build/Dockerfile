@@ -18,19 +18,11 @@ RUN npm install -g ts-node
 RUN cd SaildroneTS && npm install
 
 # See what is in the directory at this point
-RUN ls -lha
-
-# Copy all_data.zip to the root folder
-RUN cp ./SaildroneTS/output/all_data.zip .
+# RUN ls -lha
 
 # Package saildrone-data-pull directory
 RUN tar -cvzf saildrone-data-pull.tgz SaildroneTS --warning=no-file-changed \
     --exclude='./.npm' --exclude='./logs' --exclude='./.git' \
     --exclude='./.config' --exclude='./.gnupg' --exclude='./output'
 
-RUN ls -lha
-
-# Move to deploy script
-
-# Perform the data pull
-# RUN ts-node -T ./dataPull.ts
+# RUN ls -lha

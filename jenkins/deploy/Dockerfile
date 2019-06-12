@@ -26,12 +26,9 @@ RUN ts-node -T ./dataPull.ts
 
 RUN ls -lha
 
-# Package saildrone-data-pull directory
-RUN tar czvf --exclude='logs' --exclude='.git' --exclude='.npm' \
-    --exclude='.config' --exclude='.gnupg' --exclude='output' \
-    saildrone-data-pull.tgz .
+# Copy all_data.zip to the root folder
+RUN cp ./SaildroneTS/output/all_data.zip .
 
-# Package the all_data.zip file for pushing to 
 
 # Copy the all_data.zip file to nwcwp2  /var/www/html/app-warehouse/static/saildrone and unzip
-# RUN cd SaildroneTS/output && tar czf all_data.zip
+RUN cd SaildroneTS/output && tar czf all_data.zip
