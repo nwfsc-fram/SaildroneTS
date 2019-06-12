@@ -29,7 +29,8 @@ RUN ts-node -T ./dataPull.ts
 RUN ls -lha output
 
 # Package saildrone-data-pull directory
-RUN tar --exclude='./logs' --exclude='./.git' --exclude='./.npm' --exclude='./.gnupg' --exclude='./output' czvf saildrone-data-pull.tgz .
+RUN tar czvf --exclude='./logs' --exclude='./.git' --exclude='./.npm' \
+    --exclude='./.gnupg' --exclude='./output' saildrone-data-pull.tgz .
 
 # Package the all_data.zip file for pushing to 
 
