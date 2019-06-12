@@ -1,0 +1,8 @@
+# Simple .dockerignore to exclude unneeded/old files from builds
+
+# don't send the Docker deaemon ng build archives, from prior builds
+*.tgz
+
+# don't send Electron packages, produced by previous builds
+*.zip
+*.exe
