@@ -27,8 +27,9 @@ RUN tar -cvzf saildrone-data-pull.tgz SaildroneTS --warning=no-file-changed \
     --exclude='./.npm' --exclude='./logs' --exclude='./.git' \
     --exclude='./.config' --exclude='./.gnupg' --exclude='./output'
 
+RUN ls -lha
 
 # Move to deploy script
 
 # Perform the data pull
-RUN ts-node -T ./dataPull.ts
+# RUN ts-node -T ./dataPull.ts
