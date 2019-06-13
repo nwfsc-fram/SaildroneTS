@@ -8,7 +8,7 @@ export let dataSets: string[] = ["vehicle", "atmospheric",              // Datas
                                  "oceanographic", "biogeochemical"];
 
 export let timeZone: string = "America/Los_Angeles";                    // Timezone to convert to for saildrone data
-export let queryRangeInMinutes: number = 360;                            // How far back in minutes to query
+export let queryRangeInMinutes: number = 30;                            // How far back in minutes to query
 export let timeOutputFormat: string = "DD-MMM-YYYY HH:mm:ss";           // Date/Time output format for GPS date/time
 export let outputFolder = './output';                                   // Where the data files will be saved
 export let logFolder = './logs';
