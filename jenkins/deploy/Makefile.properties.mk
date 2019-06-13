@@ -12,4 +12,4 @@
 #   git commit Makefile.properties.mk
 #   git update-index --assume-unchanged Makefile.properties.mk
 
-docker_image_suffix = saildrone-data-pull
+docker_image_suffix = saildrone-data-pull-deploy
