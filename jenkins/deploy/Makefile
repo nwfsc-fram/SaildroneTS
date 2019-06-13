@@ -14,11 +14,11 @@ docker_image = node-${docker_image_suffix}
 # default target; build application for local testing/evaluation
 build: Dockerfile
 
-	-docker container prune
+	-docker container prune --force
     # make room for build
 	#-docker rm `docker ps -a -q` # delete old/stopped containers
 	# build container
-	docker build --no-cache=true -t ${docker_image} .
+	docker build -t ${docker_image} .
 	# remove old build
 	-docker rmi `docker images -a --filter=dangling=true -q`
 
