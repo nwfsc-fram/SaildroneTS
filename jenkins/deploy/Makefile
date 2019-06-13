@@ -35,6 +35,7 @@ extract:
 	
 	# TODO: Copy versioning files
 	docker cp ${docker_image}:/root/all_data.zip .
+	docker cp ${docker_image}:/root/lastUpdatedDateTime.js .
 
 	# clean up
 	docker rm -f ${docker_image}
