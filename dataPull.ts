@@ -38,6 +38,18 @@ export async function authenticate(key: string, secret: string): Promise<Object>
     return response.data;
 }
 
+export async function getAccesses(authToken: string): Promise<Object> {
+    let accessesEndpoint: string = 'v1/auth/access';
+    let accessesUrl: string = saildroneUrl + accessesEndpoint;
+    const response = await Axios.get(accessesUrl, {
+        headers: {
+            "Accept": "application/json",
+            "authorization": authToken
+        },
+    });
+    return response.data;
+}
+
 export async function getTimeSeriesData(authToken: string, mission: string, dataSet: string, queryTime: number): 
     Promise<Object> {
     let timeSeriesEndpoint = 'v1/timeseries/' + mission;
@@ -84,8 +96,13 @@ export async function getData() {
         logger.info('Saildrone API health check ... Success');
 
         let authToken = await authenticate(apiKey, apiSecret);
+        logger.info(`authToken = ${JSON.stringify(authToken)}`);
         if (authToken['success']) {
             logger.info('Authentication ... Success')
+
+            // Get Accesses
+            let accesses = await getAccesses(authToken['token']);
+            logger.info(`Access = ${JSON.stringify(accesses)}`);
 
             missions.forEach(async mission => {
                 logger.info(`Pulling mission ${mission} data...`);
@@ -95,6 +112,8 @@ export async function getData() {
 
                     // Pull the mission / dataset time series
                     let response = await getTimeSeriesData(authToken['token'], mission, dataSet, queryRangeInMinutes);
+                    logger.info(`response = ${JSON.stringify(response)}`);
+
                     if (response === null) {
                         logger.info(`\tdata not available for mission ${mission} ${dataSet}, skipping...`);
                         return;
