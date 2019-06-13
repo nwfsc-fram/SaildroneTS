@@ -18,7 +18,7 @@ build: Dockerfile
 	# build container
 	docker build -t ${docker_image} .
 	# remove old build
-	-docker rmi --force `docker images -a --filter=dangling=true -q`
+	-docker rmi `docker images -a --filter=dangling=true -q`
 
 run:
 	make build
