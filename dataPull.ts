@@ -180,9 +180,11 @@ export async function getData() {
 
             // Get a listing of all of the files of interest and add to the zip file
             let csvFiles = fg.sync([
-                outputFolder + '/**/*.csv', 
-                outputFolder + '/**/*.json'], {nocase: true, deep: 0}
+                path.join(__dirname, outputFolder) + '/**/*.csv', 
+                path.join(__dirname, outputFolder) + '/**/*.json'], {nocase: true, deep: 0}
             );
+            logger.info(`csvFiles = ${csvFiles}`);
+
             csvFiles.forEach(async (x) => {
                 await zipFile.addFile(x, x.split("/").pop());
                 logger.info(`\tzipping ${x}`)
