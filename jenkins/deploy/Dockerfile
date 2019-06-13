@@ -23,4 +23,6 @@ RUN cd SaildroneTS && ts-node -T ./dataPull.ts
 # Copy all_data.zip to the root folder
 RUN cp ./SaildroneTS/output/all_data.zip .
 
+RUN cp ./SaildroneTS/output/lastUpdatedDateTime.js .
+
 RUN ls -lha

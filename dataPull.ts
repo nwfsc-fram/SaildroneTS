@@ -112,8 +112,6 @@ export async function getData() {
 
                     // Pull the mission / dataset time series
                     let response = await getTimeSeriesData(authToken['token'], mission, dataSet, queryRangeInMinutes);
-                    logger.info(`response = ${JSON.stringify(response)}`);
-
                     if (response === null) {
                         logger.info(`\tdata not available for mission ${mission} ${dataSet}, skipping...`);
                         return;
@@ -166,8 +164,8 @@ export async function getData() {
                     let updatedFullPath = path.join(outputFolder, updateDateTimeName);
                     let mjsText = "export function latestUpdate() { return '" + new Date() + "'; }";
                     writeFileSync(updatedFullPath, mjsText);
-                })
-                logger.info(`\tmission ${mission} data files written`);
+                })                    
+                // logger.info(`\tmission ${mission} data files written`);
             })
             logger.info('Data pull completed');
 
@@ -177,6 +175,7 @@ export async function getData() {
             }
 
             // Generate the zip file
+            logger.info(`Creating new all_data.zip file`);
             let zipFile = new yazl.ZipFile();
 
             // Get a listing of all of the files of interest and add to the zip file
