@@ -29,15 +29,15 @@ run:
 extract:
 	make build
 
-	## make container + extract tarball
+	##### make container + extract tarball #####
 	-docker rm -f ${docker_image}
 	docker create --name ${docker_image} ${docker_image}
 	
-	# TODO: Copy versioning files
+	##### copy results #####
 	docker cp ${docker_image}:/root/all_data.zip .
 	docker cp ${docker_image}:/root/lastUpdatedDateTime.js .
 
-	# clean up
+	##### clean up #####
 	docker rm -f ${docker_image}
 
 debug:
