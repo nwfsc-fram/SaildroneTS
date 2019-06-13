@@ -96,7 +96,7 @@ export async function getData() {
         logger.info('Saildrone API health check ... Success');
 
         let authToken = await authenticate(apiKey, apiSecret);
-        logger.info(`authToken = ${JSON.stringify(authToken)}`);
+        // logger.info(`authToken = ${JSON.stringify(authToken)}`);
         if (authToken['success']) {
             logger.info('Authentication ... Success')
 
@@ -183,8 +183,8 @@ export async function getData() {
                 outputFolder + '/**/*.csv', 
                 outputFolder + '/**/*.json'], {nocase: true, deep: 0}
             );
-            csvFiles.forEach(x => {
-                zipFile.addFile(x, x.split("/").pop());
+            csvFiles.forEach(async (x) => {
+                await zipFile.addFile(x, x.split("/").pop());
                 logger.info(`\tzipping ${x}`)
             })
 
