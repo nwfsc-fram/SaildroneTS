@@ -16,7 +16,7 @@ build: Dockerfile
     # make room for build
 	-docker rm `docker ps -a -q` # delete old/stopped containers
 	# build container
-	docker build --no-cache -t ${docker_image} .
+	docker build --no-cache=true -t ${docker_image} .
 	# remove old build
 	-docker rmi `docker images -a --filter=dangling=true -q`
 
