@@ -186,6 +186,7 @@ export async function getData() {
             } else {
                 globDir = outputFolder;
             }
+            logger.info(`__dirname = ${__dirname},   globDir = ${globDir}`);
 
             let csvFiles = fg.sync([
                 globDir + '/**/*.csv', 
