@@ -1,4 +1,4 @@
-import { writeFileSync, appendFileSync, existsSync, mkdirSync, createWriteStream, renameSync, unlinkSync } from 'fs';
+import { writeFileSync, appendFileSync, existsSync, mkdirSync, createWriteStream, unlinkSync } from 'fs';
 import * as path from 'path';
 import Axios from 'axios';
 import * as json2csv from 'json2csv';
@@ -53,12 +53,12 @@ export async function getAccesses(authToken: string): Promise<Object> {
     return response.data;
 }
 
-export async function getTimeSeriesData(authToken: string, mission: string, dataSet: string, queryTime: number): 
+export async function getTimeSeriesData(authToken: string, mission: string, dataSet: string, startDate: string): 
     Promise<Object> {
     let timeSeriesEndpoint = 'v1/timeseries/' + mission;
     let timeSeriesUrl = saildroneUrl + timeSeriesEndpoint;
 
-    let startDate = moment().subtract(queryTime, 'minutes').format();   // subtract minutes from now to start the query
+    // let startDate = moment().subtract(queryTime, 'minutes').format();   // subtract minutes from now to start the query
     let endDate = moment().format();    // now
 
     if (timeRangeTest) {
@@ -103,18 +103,39 @@ export async function getData() {
         if (authToken['success']) {
             logger.info('Authentication ... Success')
 
+            let isInitialPull: boolean = false;
+            if (existsSync('./initialPull')) {
+                isInitialPull = true;
+                logger.info(`initialPull = ${isInitialPull}`);
+            }
+
             // Get Accesses
             let accesses = await getAccesses(authToken['token']);
-            logger.info(`Access = ${JSON.stringify(accesses)}`);
+            let drones: any = null, droneAccess: any = null, startDate: any = null;
+            if ((accesses["data"] !== null) && (accesses["data"]["access"] !== null)) {
+                drones = accesses["data"]["access"];
+            }
 
+            // Iterate through the missions
             missions.forEach(async mission => {
                 logger.info(`Pulling mission ${mission} data...`);
+
+                if (drones !== null) {
+                    droneAccess = drones.filter((d: any) => d['drone_id'] === parseInt(mission));
+                    if (droneAccess.length === 1) droneAccess = droneAccess[0];
+                }
+                logger.info(`\taccess = ${JSON.stringify(droneAccess)}`);
+                if ((isInitialPull) && (droneAccess !== null)) {
+                    startDate = droneAccess["start_date"];
+                } else {
+                    startDate = moment().subtract(queryRangeInMinutes, 'minutes').format();   // subtract minutes from now to start the query
+                }
 
                 dataSets.forEach(async dataSet => {
                     logger.info(`\t${dataSet}`);
 
                     // Pull the mission / dataset time series
-                    let response = await getTimeSeriesData(authToken['token'], mission, dataSet, queryRangeInMinutes);
+                    let response = await getTimeSeriesData(authToken['token'], mission, dataSet, startDate);
                     if (response === null) {
                         logger.info(`\tdata not available for mission ${mission} ${dataSet}, skipping...`);
                         return;
@@ -181,12 +202,12 @@ export async function getData() {
             if (__dirname === '/root/SaildroneTS') {
                 // globDir = path.join('SaildroneTS', outputFolder);
                 globDir = path.join(__dirname, outputFolder);
+                // globDir = path.join(cwd(), outputFolder);
             } else {
                 globDir = outputFolder;
             }
-            // globDir = path.join(cwd(), outputFolder);
 
-            logger.info(`\n__dirname = ${__dirname}\nglobDir = ${globDir}\ncwd = ${cwd()}`);
+            // logger.info(`\n__dirname = ${__dirname}\nglobDir = ${globDir}\ncwd = ${cwd()}`);
 
             // Create tar file
             let createTar: boolean = false;
