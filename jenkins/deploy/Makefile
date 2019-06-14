@@ -36,8 +36,9 @@ extract:
 	docker create --name ${docker_image} ${docker_image}
 	
 	##### copy results #####
-	docker cp ${docker_image}:/root/all_data.tar .
-	docker cp ${docker_image}:/root/lastUpdatedDateTime.js .
+	# docker cp ${docker_image}:/root/all_data.tar .
+	# docker cp ${docker_image}:/root/lastUpdatedDateTime.js .
+	docker cp ${docker_image}:/root/SaildroneTS/output .
 
 	##### clean up #####
 	docker rm -f ${docker_image}
