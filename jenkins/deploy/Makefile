@@ -36,7 +36,7 @@ extract:
 	docker create --name ${docker_image} ${docker_image}
 	
 	##### copy results #####
-	docker cp ${docker_image}:/root/all_data.zip .
+	docker cp ${docker_image}:/root/all_data.tar .
 	docker cp ${docker_image}:/root/lastUpdatedDateTime.js .
 
 	##### clean up #####
