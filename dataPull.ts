@@ -6,6 +6,7 @@ import { logger } from './logger';
 import * as moment from 'moment-timezone';
 import * as yazl from 'yazl';
 import * as fg from 'fast-glob';
+import { env, cwd } from 'process';
 
 import { saildroneUrl, missions, dataSets, queryRangeInMinutes, timeZone, timeOutputFormat, 
     outputFolder, timeRangeTest } from './parameters';
@@ -186,7 +187,7 @@ export async function getData() {
             } else {
                 globDir = outputFolder;
             }
-            logger.info(`__dirname = ${__dirname},   globDir = ${globDir}`);
+            logger.info(`\n__dirname = ${__dirname}\nglobDir = ${globDir}\ncwd = ${cwd()}`);
 
             let csvFiles = fg.sync([
                 globDir + '/**/*.csv', 
