@@ -176,14 +176,6 @@ export async function getData() {
                 unlinkSync(path.join(__dirname, outputFolder, "all_data.zip"));
             }
 
-            // Generate the zip file
-            let zip: boolean = false;
-
-            logger.info(`Creating new all_data.zip file`);
-            let zipFile = new yazl.ZipFile();
-
-            // Get a listing of all of the files of interest and add to the zip file
-            // logger.info(`output folder: ${path.join(__dirname, outputFolder)}`);
             let globDir: string = '';
             if (__dirname === '/root/SaildroneTS') {
                 globDir = path.join('SaildroneTS', outputFolder);
@@ -192,23 +184,32 @@ export async function getData() {
             }
             logger.info(`\n__dirname = ${__dirname}\nglobDir = ${globDir}\ncwd = ${cwd()}`);
 
-            let csvFiles = fg.sync([
-                globDir + '/**/*.csv', 
-                globDir + '/**/*.json'], {nocase: true, deep: 0}
-            );
-            logger.info(`csvFiles = ${csvFiles}`);
+            // Generate the zip file
+            let zip: boolean = false;
+            if (zip) {
 
-            csvFiles.forEach(async (x) => {
-                await zipFile.addFile(x, x.split("/").pop());
-                logger.info(`\tzipping ${x}`)
-            })
+                logger.info(`Creating new all_data.zip file`);
+                let zipFile = new yazl.ZipFile();
 
-            // Finalize the zip file
-            zipFile.outputStream.pipe(createWriteStream(path.join(__dirname, outputFolder, "all_data.zip"))).on("close", function() {
-                logger.info("Zip file written\n");
-            });
-            zipFile.end();
+                // Get a listing of all of the files of interest and add to the zip file
+                let csvFiles = fg.sync([
+                    globDir + '/**/*.csv', 
+                    globDir + '/**/*.json'], {nocase: true, deep: 0}
+                );
+                logger.info(`csvFiles = ${csvFiles}`);
 
+                csvFiles.forEach(async (x) => {
+                    await zipFile.addFile(x, x.split("/").pop());
+                    logger.info(`\tzipping ${x}`)
+                })
+
+                // Finalize the zip file
+                zipFile.outputStream.pipe(createWriteStream(path.join(__dirname, outputFolder, "all_data.zip"))).on("close", function() {
+                    logger.info("Zip file written\n");
+                });
+                zipFile.end();
+            }
+    
             // Create tar file
             tar.c(
                 {
