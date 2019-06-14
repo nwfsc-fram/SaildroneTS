@@ -179,6 +179,7 @@ export async function getData() {
             let zipFile = new yazl.ZipFile();
 
             // Get a listing of all of the files of interest and add to the zip file
+            logger.info(`output folder: ${path.join(__dirname, outputFolder)}`);
             let csvFiles = fg.sync([
                 path.join(__dirname, outputFolder) + '/**/*.csv', 
                 path.join(__dirname, outputFolder) + '/**/*.json'], {nocase: true, deep: 0}
