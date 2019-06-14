@@ -182,7 +182,19 @@ export async function getData() {
             } else {
                 globDir = outputFolder;
             }
+            globDir = path.join(cwd(), outputFolder);
             logger.info(`\n__dirname = ${__dirname}\nglobDir = ${globDir}\ncwd = ${cwd()}`);
+
+            // Create tar file
+            tar.c(
+                {
+                    file: 'all_data.tar',
+                    sync: true,
+                    cwd: globDir
+                },
+                ['']
+            );
+            logger.info(`Tar file written`);
 
             // Generate the zip file
             let zip: boolean = false;
@@ -209,17 +221,6 @@ export async function getData() {
                 });
                 zipFile.end();
             }
-    
-            // Create tar file
-            tar.c(
-                {
-                    file: 'all_data.tar',
-                    sync: true,
-                    cwd: globDir
-                },
-                ['']
-            );
-            logger.info(`Tar file written`);
         }
     }
 }
