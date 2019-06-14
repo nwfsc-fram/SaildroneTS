@@ -28,7 +28,7 @@ RUN cd SaildroneTS/output && ls -lha
 # RUN /usr/bin/zip -r all_data.zip SaildroneTS/output/
 
 # Create the all_data.tar file
-RUN tar -cvf all_data.tar -C SaildroneTS/output
+RUN tar -C SaildroneTS/output -cvf all_data.tar  .
 
 RUN ls -lha
 
