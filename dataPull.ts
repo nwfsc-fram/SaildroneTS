@@ -182,7 +182,7 @@ export async function getData() {
             } else {
                 globDir = outputFolder;
             }
-            globDir = path.join(cwd(), outputFolder);
+            // globDir = path.join(cwd(), outputFolder);
             logger.info(`\n__dirname = ${__dirname}\nglobDir = ${globDir}\ncwd = ${cwd()}`);
 
             // Create tar file
