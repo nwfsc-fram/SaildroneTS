@@ -20,7 +20,7 @@ RUN npm install -g ts-node
 # Perform the data pull
 RUN cd SaildroneTS && ts-node -T ./dataPull.ts
 
-RUN cd SaildroneTS/output && zip all_data.zip *.csv *.json
+# RUN cd SaildroneTS/output && /usr/bin/zip all_data.zip *.csv *.json
 
 RUN cd SaildroneTS/output && ls -lha
 

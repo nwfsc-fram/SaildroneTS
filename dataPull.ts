@@ -180,9 +180,16 @@ export async function getData() {
 
             // Get a listing of all of the files of interest and add to the zip file
             // logger.info(`output folder: ${path.join(__dirname, outputFolder)}`);
+            let globDir: string = '';
+            if (__dirname === '/root/SaildroneTS') {
+                globDir = path.join('SaildroneTS', outputFolder);
+            } else {
+                globDir = outputFolder;
+            }
+
             let csvFiles = fg.sync([
-                outputFolder + '/**/*.csv', 
-                outputFolder + '/**/*.json'], {nocase: true, deep: 0}
+                globDir + '/**/*.csv', 
+                globDir + '/**/*.json'], {nocase: true, deep: 0}
             );
             logger.info(`csvFiles = ${csvFiles}`);
 
