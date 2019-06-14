@@ -178,7 +178,8 @@ export async function getData() {
 
             let globDir: string = '';
             if (__dirname === '/root/SaildroneTS') {
-                globDir = path.join('SaildroneTS', outputFolder);
+                // globDir = path.join('SaildroneTS', outputFolder);
+                globDir = path.join(__dirname, outputFolder);
             } else {
                 globDir = outputFolder;
             }
