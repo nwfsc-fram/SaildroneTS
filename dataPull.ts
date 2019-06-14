@@ -183,6 +183,7 @@ export async function getData() {
                 globDir = outputFolder;
             }
             // globDir = path.join(cwd(), outputFolder);
+
             logger.info(`\n__dirname = ${__dirname}\nglobDir = ${globDir}\ncwd = ${cwd()}`);
 
             // Create tar file
@@ -190,7 +191,7 @@ export async function getData() {
                 {
                     file: 'all_data.tar',
                     sync: true,
-                    cwd: globDir
+                    cwd: outputFolder
                 },
                 ['']
             );
