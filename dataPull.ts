@@ -12,6 +12,7 @@ import * as tar from 'tar';
 import { saildroneUrl, missions, dataSets, queryRangeInMinutes, timeZone, timeOutputFormat, 
     outputFolder, timeRangeTest } from './parameters';
 import { apiKey, apiSecret } from './keys';
+import { create } from 'domain';
 
 logger.info('***** Start data processing *****');
 
@@ -188,15 +189,18 @@ export async function getData() {
             logger.info(`\n__dirname = ${__dirname}\nglobDir = ${globDir}\ncwd = ${cwd()}`);
 
             // Create tar file
-            tar.c(
-                {
-                    file: 'all_data.tar',
-                    sync: true,
-                    cwd: outputFolder
-                },
-                ['']
-            );
-            logger.info(`Tar file written`);
+            let createTar: boolean = false;
+            if (createTar) {
+                tar.c(
+                    {
+                        file: 'all_data.tar',
+                        sync: true,
+                        cwd: outputFolder
+                    },
+                    ['']
+                );
+                logger.info(`Tar file written`);
+            }
 
             // Generate the zip file
             let zip: boolean = false;

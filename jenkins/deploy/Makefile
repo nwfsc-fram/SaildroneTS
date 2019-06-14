@@ -38,7 +38,8 @@ extract:
 	##### copy results #####
 	# docker cp ${docker_image}:/root/all_data.tar .
 	# docker cp ${docker_image}:/root/lastUpdatedDateTime.js .
-	docker cp ${docker_image}:/root/SaildroneTS/output .
+	# docker cp ${docker_image}:/root/SaildroneTS/output .
+	docker cp ${docker_image}:/root/all_data.zip .
 
 	##### clean up #####
 	docker rm -f ${docker_image}
