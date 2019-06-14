@@ -25,7 +25,10 @@ RUN cd SaildroneTS && ts-node -T ./dataPull.ts
 RUN cd SaildroneTS/output && ls -lha
 
 # Create the zip file
-RUN /usr/bin/zip -r all_data.zip SaildroneTS/output/
+# RUN /usr/bin/zip -r all_data.zip SaildroneTS/output/
+
+# Create the all_data.tar file
+RUN tar -cvf all_data.tar -C SaildroneTS/output
 
 RUN ls -lha
 
