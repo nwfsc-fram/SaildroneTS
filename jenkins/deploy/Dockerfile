@@ -29,4 +29,4 @@ RUN cd SaildroneTS/output && ls -lha
 
 RUN cp ./SaildroneTS/output/lastUpdatedDateTime.js .
 
-RUN cp ./SaildroneTS/output/all_data.tar .
+RUN cp ./SaildroneTS/all_data.tar .
