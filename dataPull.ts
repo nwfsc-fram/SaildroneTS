@@ -7,6 +7,7 @@ import * as moment from 'moment-timezone';
 import * as yazl from 'yazl';
 import * as fg from 'fast-glob';
 import { env, cwd } from 'process';
+import * as tar from 'tar';
 
 import { saildroneUrl, missions, dataSets, queryRangeInMinutes, timeZone, timeOutputFormat, 
     outputFolder, timeRangeTest } from './parameters';
@@ -134,10 +135,10 @@ export async function getData() {
                     let subfolder = path.join(__dirname, outputFolder, mission)
                     let updateFilename = mission + '_' + dataSet + '_' + moment().tz(timeZone).format("YYYYMMDD_HHmmss") + '.csv';
                     let updateFullPath = path.join(subfolder, updateFilename);
-                    if (!existsSync(subfolder)) {
-                        mkdirSync(subfolder);
-                    }
-                    writeFileSync(updateFullPath, csv);
+                    // if (!existsSync(subfolder)) {
+                    //     mkdirSync(subfolder);
+                    // }
+                    // writeFileSync(updateFullPath, csv);
 
                     // Append the current data to the master file if it exists, otherwise create a new file
                     let masterFilename = mission + '_' + dataSet + '.csv';
@@ -176,6 +177,8 @@ export async function getData() {
             }
 
             // Generate the zip file
+            let zip: boolean = false;
+
             logger.info(`Creating new all_data.zip file`);
             let zipFile = new yazl.ZipFile();
 
@@ -205,6 +208,17 @@ export async function getData() {
                 logger.info("Zip file written\n");
             });
             zipFile.end();
+
+            // Create tar file
+            tar.c(
+                {
+                    file: 'all_data.tar',
+                    sync: true,
+                    cwd: globDir
+                },
+                ['']
+            );
+            logger.info(`Tar file written`);
         }
     }
 }
