@@ -146,7 +146,7 @@ export async function getData() {
 
                                 try {
                                     line = await getLastLineSync(masterFullPath, 1);
-                                    // logger.info(`\t\tline = ${line}`);
+                                    logger.info(`\t\tline = ${line}`);
                                     lineSplit = line.split(",");
                                     startDate = moment(lineSplit[2], "DD-MMM-YYYY HH:mm:ss").tz(timeZone).add(1, "minutes");
                                     if (startDate.isValid) {
