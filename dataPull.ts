@@ -104,11 +104,11 @@ export async function getData() {
         if (authToken['success']) {
             logger.info('Authentication ... Success')
 
-            let isInitialPull: boolean = false;
-            if (existsSync('./initialPull')) {
-                isInitialPull = true;
-                logger.info(`initialPull = ${isInitialPull}`);
-            }
+            // let isInitialPull: boolean = false;
+            // if (existsSync('./initialPull')) {
+            //     isInitialPull = true;
+            //     logger.info(`initialPull = ${isInitialPull}`);
+            // }
 
             // Get Accesses
             let accesses = await getAccesses(authToken['token']);
