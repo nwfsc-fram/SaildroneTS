@@ -149,19 +149,23 @@ export async function getData() {
                                     // logger.info(`\t\tline = ${line}`);
                                     lineSplit = line.split(",");
                                     startDate = moment(lineSplit[2], "DD-MMM-YYYY HH:mm:ss").tz(timeZone).add(1, "minutes");
-                                    startDate = startDate.isValid ? startDate.format() : 
-                                        moment().subtract(queryRangeInMinutes, 'minutes').format();
-                                    logger.info(`\t\tQuerying since the last time of the last date element`);
+                                    if (startDate.isValid) {
+                                        startDate = startDate.format();
+                                        logger.info(`\t\tQuerying since the last time of the last date element`);
+                                    } else {
+                                        startDate = moment().tz(timeZone).subtract(queryRangeInMinutes, 'minutes').format();
+                                        logger.info(`\t\tQuerying the last ${queryRangeInMinutes} minutes`);
+                                    }
                                 } catch (e) {
-                                    startDate = moment().subtract(queryRangeInMinutes, 'minutes').format();   // subtract minutes from now to start the query
+                                    startDate = moment().tz(timeZone).subtract(queryRangeInMinutes, 'minutes').format();   // subtract minutes from now to start the query
                                     logger.info(`\t\tError in parsing last date/time: ${e}`);
-                                    logger.info(`\t\t${mission} ${dataSet} - Updating for the last ${queryRangeInMinutes} minutes`);
+                                    logger.info(`\t\tQuerying the last ${queryRangeInMinutes} minutes`);
                                 }
                                 // logger.info(`\t\t${mission} ${dataSet} last line = ${line}`);    
                             } else {
 
                                 // Mission + dataset csv does not exist, start pulling from the beginning
-                                logger.info(`\t\t${mission} ${dataSet} - csv not found, pulling all data for it.`);
+                                logger.info(`\t\tCSV not found, pulling all data for it.`);
                                 startDate = droneAccess["start_date"];
                             }
 
