@@ -148,16 +148,16 @@ export async function getData() {
                                     line = await getLastLineSync(masterFullPath, 1);
                                     logger.info(`\t\tline = ${line}`);
                                     lineSplit = line.split(",");
-                                    startDate = moment(lineSplit[2], "DD-MMM-YYYY HH:mm:ss").tz(timeZone).add(1, "minutes");
+                                    startDate = moment(lineSplit[2], "DD-MMM-YYYY HH:mm:ss", timeZone).add(1, "minutes");
                                     if (startDate.isValid) {
                                         startDate = startDate.format();
-                                        logger.info(`\t\tQuerying since the last time of the last date element`);
+                                        logger.info(`\t\tQuerying since the last time of the last date element using ${lineSplit[2]}`);
                                     } else {
-                                        startDate = moment().tz(timeZone).subtract(queryRangeInMinutes, 'minutes').format();
-                                        logger.info(`\t\tQuerying the last ${queryRangeInMinutes} minutes`);
+                                        startDate = moment.tz(timeZone).subtract(queryRangeInMinutes, 'minutes').format();
+                                        logger.info(`\t\tFailed to parse an invalid date, querying the last ${queryRangeInMinutes} minutes`);
                                     }
                                 } catch (e) {
-                                    startDate = moment().tz(timeZone).subtract(queryRangeInMinutes, 'minutes').format();   // subtract minutes from now to start the query
+                                    startDate = moment.tz(timeZone).subtract(queryRangeInMinutes, 'minutes').format();   // subtract minutes from now to start the query
                                     logger.info(`\t\tError in parsing last date/time: ${e}`);
                                     logger.info(`\t\tQuerying the last ${queryRangeInMinutes} minutes`);
                                 }
