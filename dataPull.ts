@@ -150,7 +150,8 @@ export async function getData() {
                                     lineSplit = line.split(",");
                                     startDate = moment(lineSplit[2], "DD-MMM-YYYY HH:mm:ss", timeZone).add(1, "minutes");
                                     if (startDate.isValid) {
-                                        startDate = moment.utc(startDate).format();
+                                        startDate = startDate.tz("UTC").format();
+                                        // startDate = moment.utc(startDate).format();
                                         logger.info(`\t\tQuerying since the last time of the last date element using ${lineSplit[2]}`);
                                     } else {
                                         startDate = moment.tz(timeZone).subtract(queryRangeInMinutes, 'minutes').format();
