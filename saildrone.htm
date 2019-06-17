@@ -50,9 +50,9 @@ function populateData() {
     timer.addEventListener('secondsUpdated', function (e) {
         counterID.innerHTML = timer.getTimeValues().seconds;
     });
-    timer.addEventListener('targetAchieved', function (e) {
-        counterID.innerHTML = 'REFRESHING ...';
-    });
+    //timer.addEventListener('targetAchieved', function (e) {
+    //    counterID.innerHTML = 'REFRESHING ...';
+    //});
 
     // Configure the Clock
     var clockID = document.getElementById("clock");
