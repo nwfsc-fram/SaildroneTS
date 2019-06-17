@@ -104,19 +104,17 @@ function populateData() {
 
             // DateTime
             dateTimeCell = newRow.insertCell(2);
-            dateTimeText = document.createTextNode(lastUpdate);
-            dateTimeCell.appendChild(dateTimeText);
 
             // Link
             linkCell = newRow.insertCell(3);
             linkCell.id = x + "_" + y + "_link";
             url = "saildrone/" + x + "_" + y + ".csv";
-            fileExists(linkCell, url);
+            fileExists(linkCell, url, dateTimeCell);
         };
     };
 }
 
-function fileExists(linkCell, url) {
+function fileExists(linkCell, url, dateTimeCell) {
     if(url){
         var req = new XMLHttpRequest();
         var contentType;
@@ -129,9 +127,13 @@ function fileExists(linkCell, url) {
                     newLink.appendChild(linkText);
                     newLink.setAttribute("href", url);    
                     linkCell.appendChild(newLink);
+                    dateTimeText = document.createTextNode(lastUpdate);
+                    dateTimeCell.appendChild(dateTimeText);        
                 } else {
                     linkText = document.createTextNode("Mission has not been launched yet");
                     linkCell.appendChild(linkText);
+                    dateTimeText = document.createTextNode("N/A");
+                    dateTimeCell.appendChild(dateTimeText);
                 }
             }
         }
