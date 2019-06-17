@@ -1,5 +1,5 @@
 # SaildroneTS
-Software for querying the Saildrone API
+Software for querying the [Saildrone](https://www.saildrone.com/) API.  Saildrone provides a [Swagger interface](https://developer-mission.saildrone.com/api-docs) for testing their API.
 
 ## Installation Instructions
 1. Install Node.js - download [here](https://nodejs.org/en/)
