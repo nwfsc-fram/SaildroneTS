@@ -75,41 +75,69 @@ function populateData() {
         minutes: nextUpdate.getMinutes() - clock.getTimeValues().minutes,
         seconds: nextUpdate.getSeconds() - clock.getTimeValues().seconds}
     });
-    remainingTimer.addEventListener('secondsUpdated', function (e) {
-        remainingTimeID.innerHTML = remainingTimer.getTimeValues().toString();
-    })
+    //remainingTimer.addEventListener('secondsUpdated', function (e) {
+    //    remainingTimeID.innerHTML = remainingTimer.getTimeValues().toString();
+    //})
 
     // Configure the lastUpdate
     lastUpdate = formatDateTime(lastUpdate);
     var lastUpdateTimeID = document.getElementById("lastUpdateDateTime");
     lastUpdateTimeID.innerHTML = lastUpdate;
 
-    var newRow, newCell, newText, newLink;
+    var newRow, newCell, newText, newLink, url;
     var table = document.getElementById("dataTable").getElementsByTagName('tbody')[0];
-    missions.forEach(x => {
-        datasets.forEach(y => {
+    //missions.forEach(x => {
+    //    datasets.forEach(y => {
+    for (var x of missions) {
+        for (var y of datasets) {
             newRow = table.insertRow(table.rows.length);
 
+            // Mission
             missionCell = newRow.insertCell(0);
             missionText = document.createTextNode(x);
             missionCell.appendChild(missionText);
 
+            // Dataset
             datasetCell = newRow.insertCell(1);
             datasetText = document.createTextNode(titleCase(y));
             datasetCell.appendChild(datasetText);
 
+            // DateTime
             dateTimeCell = newRow.insertCell(2);
             dateTimeText = document.createTextNode(lastUpdate);
             dateTimeCell.appendChild(dateTimeText);
 
+            // Link
             linkCell = newRow.insertCell(3);
-            newLink = document.createElement('a');
-            linkText = document.createTextNode("Link");
-            newLink.appendChild(linkText);
-            newLink.setAttribute("href", "./saildrone/" + x + "_" + y + ".csv");
-            linkCell.appendChild(newLink);
-        });
-    });
+            linkCell.id = x + "_" + y + "_link";
+            url = "saildrone/" + x + "_" + y + ".csv";
+            fileExists(linkCell, url);
+        };
+    };
+}
+
+function fileExists(linkCell, url) {
+    if(url){
+        var req = new XMLHttpRequest();
+        var contentType;
+        req.onreadystatechange = function() {
+            if (this.readyState === this.DONE) {
+                contentType = req.getResponseHeader("Content-Type");
+                if ((req.status === 200) && (contentType === "text/csv")) {
+                    newLink = document.createElement('a');
+                    linkText = document.createTextNode("Link");
+                    newLink.appendChild(linkText);
+                    newLink.setAttribute("href", url);    
+                    linkCell.appendChild(newLink);
+                } else {
+                    linkText = document.createTextNode("Mission has not been launched yet");
+                    linkCell.appendChild(linkText);
+                }
+            }
+        }
+        req.open('HEAD', url, true);
+        req.send();
+    }
 }
 
 function formatDateTime(dateTime) {
