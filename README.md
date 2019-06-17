@@ -10,8 +10,8 @@ Software for querying the Saildrone API
 
 4. In a command window, navigate to the cloned folder and install the required node modules:  `npm install`
 
-5. Copy the `keys-sample.ts` file to a `keys.ts` file and insert your key and secret values received from Saildrone.
+5. Copy the `keys-sample.ts` file to a `keys.ts` file and insert your key and secret values provided by Saildrone.
 
 6. Edit the `parameters.ts` file to enter your specific Saildrone missions (`missions` parameter) and datasets of interest (`datasets` parameter)
 
-7. Run the software:  `ts-node -T .\dataPull.ts`
+7. Run the software:  `ts-node -T ./dataPull.ts`
