@@ -9,7 +9,11 @@ function refreshPage() {
     // console.info(`version = ${pageVersion}`);
     // console.info(`path = ${path}`);
     // console.info(`func = ${func}`);
-    setTimeout(func, 30000);
+    var timeout = 30000;
+    if (window.location.href.indexOf('?v=') === -1) {
+        timeout = 0;
+    }
+    setTimeout(func, timeout);
 }
 
 function populateData() {
