@@ -201,7 +201,8 @@ export async function getData() {
 
                                 // Convert the Epoch time to ISO-8601 time
                                 data = await data.map((x: number) => {
-                                    x['gps_time'] = moment.unix(x['gps_time']).tz(timeZone).format(timeOutputFormat);
+                                    x['gps_time'] = moment.unix(x['gps_time']).tz(timeZone).format(timeOutputFormat); // Local timezone
+                                    // x['gps_time'] = moment.unix(x['gps_time']).format(timeOutputFormat); // UTC timezone
                                     return x;
                                 })
 
