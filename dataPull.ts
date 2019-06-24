@@ -152,12 +152,12 @@ export async function getData() {
 
                             // Pull the mission / dataset time series
                             logger.info(`\t\tstartDate = ${startDate}`);
-                            if (startDate !== "Invalid Date") {
+                            if (startDate.isValid()) {
 
                                 let timeCutoff = moment().tz(timeZone).substract(queryRangeInMinutes, "minutes");
                                 logger.info(`timeCutoff is ${queryRangeInMinutes} minutes ago = ${timeCutoff.format()}`);
 
-                                while (startDate.isBefore(timeCutoff)) {
+                                while ((startDate.isValid()) && (startDate.isBefore(timeCutoff))) {
 
                                     response = await getTimeSeriesData(authToken['token'], mission, dataSet, startDate.format());
                                     if (response === null) {
