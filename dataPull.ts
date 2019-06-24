@@ -8,9 +8,9 @@ import * as moment from 'moment-timezone';
 import * as yazl from 'yazl';
 import * as fg from 'fast-glob';
 import * as tar from 'tar';
-import { getLastLineSync } from './utilities';
+import { getLastStartDateTime } from './utilities';
 
-import { saildroneUrl, missions, dataSets, queryRangeInMinutes, timeZone, timeOutputFormat, 
+import { saildroneUrl, queryRangeInMinutes, timeZone, timeOutputFormat, 
     outputFolder, timeRangeTest } from './parameters';
 import { apiKey, apiSecret } from './keys';
 
@@ -121,7 +121,7 @@ export async function getData() {
             // missions.forEach(async mission => {
             let mission: number = null, stats: any = null, size: number = null, 
                 stream: any = null, options: object = null, line: string = null, lineSplit: string[],
-                lastDateTime: any, response: any;
+                lastDateTime: any, response: any, lineNo: number = 1;
             // drones.forEach(async drone => {
             for (let drone of drones) {
                 mission = drone['drone_id'];
@@ -140,106 +140,83 @@ export async function getData() {
                             let masterFilename = mission + '_' + dataSet + '.csv';
                             let masterFullPath = path.join(__dirname, outputFolder, masterFilename);
 
-                            // Find the last line of data pulled for this mission / dataset and use that to define the startDate
                             if (existsSync(masterFullPath)) {
-                                // line = await rll.read(masterFullPath, 1);
-
-                                try {
-                                    line = await getLastLineSync(masterFullPath, 1);
-                                    // logger.info(`\t\tline = ${line}`);
-                                    lineSplit = line.split(",");
-                                    startDate = moment.tz(lineSplit[2], "DD-MMM-YYYY HH:mm:ss", timeZone).add(1, "minutes");
-                                    if (startDate.isValid()) {
-                                        startDate = startDate.tz("UTC").format();
-                                        // startDate = moment.utc(startDate).format();
-                                        logger.info(`\t\tQuerying since the last time of the last date element using ${lineSplit[2]}`);
-                                    } else {
-                                        startDate = moment.tz(timeZone).subtract(queryRangeInMinutes, 'minutes').format();
-                                        logger.info(`\t\tFailed to parse due to an invalid date, querying the last ${queryRangeInMinutes} minutes`);
-                                    }
-                                } catch (e) {
-                                    startDate = moment.tz(timeZone).subtract(queryRangeInMinutes, 'minutes').format();   // subtract minutes from now to start the query
-                                    logger.info(`\t\tError in parsing last date/time: ${e}`);
-                                    logger.info(`\t\tQuerying the last ${queryRangeInMinutes} minutes`);
-                                }
-                                // logger.info(`\t\t${mission} ${dataSet} last line = ${line}`);    
+                                // Find the last line of data pulled for this mission / dataset and use that to define the startDate
+                                startDate = await getLastStartDateTime(masterFullPath);
+                                logger.info(`\t\tQuerying since the last date/time of ${v}`);
                             } else {
-
                                 // Mission + dataset csv does not exist, start pulling from the beginning
                                 logger.info(`\t\tCSV not found, pulling all data for it.`);
-                                startDate = droneAccess["start_date"];
+                                startDate = moment(droneAccess["start_date"]);
                             }
 
                             // Pull the mission / dataset time series
                             logger.info(`\t\tstartDate = ${startDate}`);
                             if (startDate !== "Invalid Date") {
 
-                                response = await getTimeSeriesData(authToken['token'], mission, dataSet, startDate);
-                                if (response === null) {
-                                    logger.info(`\tdata not available for mission ${mission} ${dataSet}, skipping...`);
-                                    return;
-                                }
-                                // logger.info(`response: ${JSON.stringify(response)}`);
-                                logger.info(`\t\tsizes, metadata: ${Object.keys(response['meta']).length}, data: ${Object.keys(response['data']).length}`);                
+                                let timeCutoff = moment().tz(timeZone).substract("minutes", queryRangeInMinutes);
+                                logger.info(`1 hour ago = ${timeCutoff.format()}`);
 
-                                // Process the data
-                                let data = response['data'];
-                                if (Object.keys(data).length !== 0) {
+                                while (startDate.isBefore(timeCutoff)) {
 
-                                    // Convert the Epoch time to ISO-8601 time
-                                    data = await data.map((x: number) => {
-                                        x['gps_time'] = moment.unix(x['gps_time']).tz(timeZone).format(timeOutputFormat); // Local timezone
-                                        // x['gps_time'] = moment.unix(x['gps_time']).format(timeOutputFormat); // UTC timezone
-                                        return x;
-                                    })
-
-                                    // Convert the JSON data to a csv - csv will include the columns headers
-                                    let csv = await json2csv.parse(data);
-
-                                    // Write the update file
-                                    // let subfolder = path.join(__dirname, outputFolder, mission.toString());
-                                    // let updateFilename = mission + '_' + dataSet + '_' + moment().tz(timeZone).format("YYYYMMDD_HHmmss") + '.csv';
-                                    // let updateFullPath = path.join(subfolder, updateFilename);
-                                    // if (!existsSync(subfolder)) {
-                                    //     mkdirSync(subfolder);
-                                    // }
-                                    // writeFileSync(updateFullPath, csv);
-
-                                    // Append the current data to the master file if it exists, otherwise create a new file
-                                    if (existsSync(masterFullPath)) {
-                                        // Drop the first line of header information
-                                        csv = "\n" + csv.substring(csv.indexOf("\n") + 1);
+                                    response = await getTimeSeriesData(authToken['token'], mission, dataSet, startDate);
+                                    if (response === null) {
+                                        logger.info(`\tdata not available for mission ${mission} ${dataSet}, skipping...`);
+                                        continue;
                                     }
-                                    try {
-                                        appendFileSync(masterFullPath, csv);
-                                    } catch (e) {
-                                        logger.error(`Error writing to data file: ${e}`);
+                                    logger.info(`\t\tsizes, metadata: ${Object.keys(response['meta']).length}, data: ${Object.keys(response['data']).length}`);                
+
+                                    // Process the data
+                                    let data = response['data'];
+                                    if (Object.keys(data).length !== 0) {
+
+                                        // Convert the Epoch time to the format defined in parameters.ts
+                                        data = await data.map((x: number) => {
+                                            x['gps_time'] = moment.unix(x['gps_time']).tz(timeZone).format(timeOutputFormat);
+                                            return x;
+                                        })
+
+                                        // Convert the JSON data to a csv - csv will include the columns headers
+                                        let csv = await json2csv.parse(data);
+
+                                        // Append the current data to the master file if it exists, otherwise create a new file
+                                        if (existsSync(masterFullPath)) {
+                                            // Drop the first line of header information if the csv file exists (i.e. don't duplicate headers)
+                                            csv = "\n" + csv.substring(csv.indexOf("\n") + 1);
+                                        }
+                                        try {
+                                            appendFileSync(masterFullPath, csv);
+                                        } catch (e) {
+                                            logger.error(`Error writing to data file: ${e}`);
+                                        }
                                     }
 
-                                    // Copy the File for Users to use
-                                    let userMasterFilename = 'USERS_' + mission + '_' + dataSet + '.csv';
-                                    let userMasterFullPath = path.join(__dirname, outputFolder, userMasterFilename);
-                                    
-                                    try {
-                                        copyFileSync(masterFullPath, userMasterFullPath);
-                                    } catch (e) {
-                                        logger.error(`Error writing to the user data file: ${e}`);
-                                    }
+                                    // Update the startDate to the newest last line of the csv file
+                                    startDate = await getLastStartDateTime(masterFullPath);
+                                };
 
+                                // Copy the File for Users to use
+                                let userMasterFilename = 'USERS_' + mission + '_' + dataSet + '.csv';
+                                let userMasterFullPath = path.join(__dirname, outputFolder, userMasterFilename);
+                                try {
+                                    copyFileSync(masterFullPath, userMasterFullPath);
+                                } catch (e) {
+                                    logger.error(`Error writing to the user data file: ${e}`);
                                 }
 
                                 // Process the metdata
                                 let metadataFilename = 'metadata_' + dataSet + '.json';
                                 let metadataFullPath = path.join(outputFolder, metadataFilename);
                                 if (!existsSync(metadataFullPath)) {
-                                    let metadata = response['meta'];
-                                    if (Object.keys(metadata).length !== 0) {
-                                        //     let fields = Object.keys(metadata["units"]).toString().split(',');    
-                                        try {
-                                            writeFileSync(metadataFullPath, JSON.stringify(metadata));
-                                        } catch (e) {
-                                            logger.error(`Error writing metadata file: ${e}`);
-                                        }
+                                    if (response !== null) {
+                                        let metadata = response['meta'];
+                                        if (Object.keys(metadata).length !== 0) {
+                                            try {
+                                                writeFileSync(metadataFullPath, JSON.stringify(metadata));
+                                            } catch (e) {
+                                                logger.error(`Error writing metadata file: ${e}`);
+                                            }
+                                        }    
                                     }
                                 }    
                             }
