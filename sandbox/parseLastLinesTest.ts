@@ -47,7 +47,7 @@ export async function parseData() {
 
 parseData();
 
-let v = moment().tz("UTC").subtract("hours", 1);
+let v = moment().tz("UTC").subtract(1, "hours");
 console.info(`one hour ago: ${v.format()}`);
 
 

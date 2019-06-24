@@ -147,19 +147,19 @@ export async function getData() {
                             } else {
                                 // Mission + dataset csv does not exist, start pulling from the beginning
                                 logger.info(`\t\tCSV not found, pulling all data for it.`);
-                                startDate = moment(droneAccess["start_date"]);
+                                startDate = moment(droneAccess["start_date"]).tz(timeZone);
                             }
 
                             // Pull the mission / dataset time series
                             logger.info(`\t\tstartDate = ${startDate}`);
                             if (startDate !== "Invalid Date") {
 
-                                let timeCutoff = moment().tz(timeZone).substract("minutes", queryRangeInMinutes);
+                                let timeCutoff = moment().tz(timeZone).substract(queryRangeInMinutes, "minutes");
                                 logger.info(`1 hour ago = ${timeCutoff.format()}`);
 
                                 while (startDate.isBefore(timeCutoff)) {
 
-                                    response = await getTimeSeriesData(authToken['token'], mission, dataSet, startDate);
+                                    response = await getTimeSeriesData(authToken['token'], mission, dataSet, startDate.format());
                                     if (response === null) {
                                         logger.info(`\tdata not available for mission ${mission} ${dataSet}, skipping...`);
                                         continue;
