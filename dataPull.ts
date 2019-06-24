@@ -151,11 +151,11 @@ export async function getData() {
                             }
 
                             // Pull the mission / dataset time series
-                            logger.info(`\t\tstartDate = ${startDate}`);
+                            logger.info(`\t\tstartDate = ${startDate.format()}`);
                             if (startDate.isValid()) {
 
-                                let timeCutoff = moment().tz(timeZone).subtract(queryRangeInMinutes, "minutes");
-                                logger.info(`timeCutoff is ${queryRangeInMinutes} minutes ago = ${timeCutoff.format()}`);
+                                let timeCutoff = moment().tz(timeZone).subtract(10, "minutes");
+                                logger.info(`\t\ttimeCutoff is 10 minutes ago = ${timeCutoff.format()}`);
 
                                 while ((startDate.isValid()) && (startDate.isBefore(timeCutoff))) {
 
