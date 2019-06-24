@@ -154,7 +154,7 @@ export async function getData() {
                             logger.info(`\t\tstartDate = ${startDate}`);
                             if (startDate.isValid()) {
 
-                                let timeCutoff = moment().tz(timeZone).substract(queryRangeInMinutes, "minutes");
+                                let timeCutoff = moment().tz(timeZone).subtract(queryRangeInMinutes, "minutes");
                                 logger.info(`timeCutoff is ${queryRangeInMinutes} minutes ago = ${timeCutoff.format()}`);
 
                                 while ((startDate.isValid()) && (startDate.isBefore(timeCutoff))) {
