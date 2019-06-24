@@ -143,7 +143,7 @@ export async function getData() {
                             if (existsSync(masterFullPath)) {
                                 // Find the last line of data pulled for this mission / dataset and use that to define the startDate
                                 startDate = await getLastStartDateTime(masterFullPath);
-                                logger.info(`\t\tQuerying since the last date/time of ${v}`);
+                                logger.info(`\t\tQuerying since the last date/time of ${startDate.format()}`);
                             } else {
                                 // Mission + dataset csv does not exist, start pulling from the beginning
                                 logger.info(`\t\tCSV not found, pulling all data for it.`);
