@@ -20,13 +20,7 @@ build: Dockerfile
 	# build container
 	docker build --no-cache=true -t ${docker_image} .
 	# remove old build
-	-docker rmi `docker images -a --filter=dangling=true -q`
-
-run:
-	make build
-	# run the container
-	-docker rm -f ${docker_image}
-	docker run --name ${docker_image} ${docker_image}
+	# -docker rmi `docker images -a --filter=dangling=true -q`
 
 extract:
 	make build
@@ -34,7 +28,7 @@ extract:
 	##### make container + extract tarball #####
 	-docker rm -f ${docker_image}
 	docker create --name ${docker_image} ${docker_image}
-	
+
 	##### copy results #####
 	# docker cp ${docker_image}:/root/all_data.tar .
 	# docker cp ${docker_image}:/root/lastUpdatedDateTime.js .
