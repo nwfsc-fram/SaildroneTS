@@ -1,4 +1,4 @@
-import { existsSync, statSync, readSync, openSync, closeSync } from "fs";
+import { existsSync, statSync, readSync, openSync, closeSync, stat, truncateSync } from "fs";
 import { Buffer } from "buffer";
 import * as moment from 'moment-timezone';
 import { timeOutputFormat } from './parameters';
@@ -33,7 +33,8 @@ export async function getLastStartDateTime(inputFilePath: string): Promise<Objec
     let NEW_LINE_CHARACTERS = ["\n", "\r"];
     let char: any = null, charCount: number = 0, fd: number = null;
     let bytesRead: number = 1, lineCount: number = 0, encoding: string = "utf8";
-    let lineSplit, line: string = "", startDate: any = null;
+    let lineSplit, line: string = "", startDate: any = null, lineSize: any = null;
+    let bytesToDelete: number = 0;
     let buffer = Buffer.alloc(1);
 
     if (existsSync(inputFilePath)) {
@@ -41,7 +42,7 @@ export async function getLastStartDateTime(inputFilePath: string): Promise<Objec
         fd = openSync(inputFilePath, "r");
         while (bytesRead > 0) {
             if (NEW_LINE_CHARACTERS.includes(char)) {
-                lineCount++;
+                lineSize = line.length;
                 line = line.replace("\n", "").replace("\r", "");
                 if (line !== "") {
                     lineSplit = line.split(",");
@@ -52,10 +53,19 @@ export async function getLastStartDateTime(inputFilePath: string): Promise<Objec
                         startDate = moment.tz(v, timeOutputFormat, true, "UTC").add(1, "minutes");
                         if (startDate.isValid()) {
                             // startDate = startDate.tz("UTC").format();
+                            
+                            // If lineCount > 1, need to remove the invalid date rows from the csv file
+                            if (lineCount > 0) {
+                                console.info(`Lines to remove from the csv file: ${lineCount}, byteSize = ${bytesToDelete}`)
+                                truncateSync(inputFilePath, stat.size - bytesToDelete);
+                            }
+
                             break;
                         }
-                        console.info(`lineCount = ${lineCount}, line = ${line}`);
                     }
+                    bytesToDelete = bytesToDelete + lineSize;
+                    lineCount++;
+                    console.info(`lineCount = ${lineCount}, line = ${line}, lineSize = ${lineSize}, bytesToDelete = ${bytesToDelete}`);
                     line = "";
                 }
                 // if (lineCount === 2) break;

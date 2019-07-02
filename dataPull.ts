@@ -153,7 +153,7 @@ export async function getData() {
                             // Pull the mission / dataset time series
                             if (startDate.isValid()) {
 
-                                let timeDiff: number = 20;
+                                let timeDiff: number = 40;
                                 let timeCutoff = moment().tz(timeZone).subtract(timeDiff, "minutes");
                                 logger.info(`\t\ttimeCutoff is ${timeDiff} minutes ago = ${timeCutoff.format()}`);
 
@@ -173,10 +173,17 @@ export async function getData() {
                                     if (Object.keys(data).length !== 0) {
 
                                         // Convert the Epoch time to the format defined in parameters.ts
-                                        data = await data.map((x: number) => {
-                                            x['gps_time'] = moment.unix(x['gps_time']).tz(timeZone).format(timeOutputFormat);
-                                            return x;
-                                        })
+                                        data = await data.filter((x: any) => {
+                                            return moment.unix(x['gps_time']).tz(timeZone).isValid();
+                                        }).map((y: any) => {
+                                            y['gps_time'] = moment.unix(y['gps_time']).tz(timeZone).format(timeOutputFormat);
+                                            return y;
+                                        });
+
+                                        // data = await data.map((x: any) => {
+                                        //     x['gps_time'] = moment.unix(x['gps_time']).tz(timeZone).format(timeOutputFormat);
+                                        //     return x;
+                                        // })
 
                                         // Convert the JSON data to a csv - csv will include the columns headers
                                         let csv = await json2csv.parse(data);

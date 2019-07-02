@@ -39,7 +39,7 @@ export async function parseDataOld(): Promise<moment> {
 }
 
 export async function parseData() {
-    let masterFilename = '1039_vehicle.csv';
+    let masterFilename = '1040_atmospheric.csv';
     let masterFullPath = path.join(__dirname, '..\\', 'output', masterFilename);
     let startDate = await getLastStartDateTime(masterFullPath);
     console.info(`startDate = ${startDate}, formatted = ${startDate.format()}`);
