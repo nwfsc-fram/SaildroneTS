@@ -100,15 +100,8 @@ export async function getData() {
         logger.info('Saildrone API health check ... Success');
 
         let authToken = await authenticate(apiKey, apiSecret);
-        // logger.info(`authToken = ${JSON.stringify(authToken)}`);
         if (authToken['success']) {
             logger.info('Authentication ... Success')
-
-            // let isInitialPull: boolean = false;
-            // if (existsSync('./initialPull')) {
-            //     isInitialPull = true;
-            //     logger.info(`initialPull = ${isInitialPull}`);
-            // }
 
             // Get Accesses
             let accesses = await getAccesses(authToken['token']);
@@ -121,7 +114,7 @@ export async function getData() {
             // missions.forEach(async mission => {
             let mission: number = null, stats: any = null, size: number = null, 
                 stream: any = null, options: object = null, line: string = null, lineSplit: string[],
-                lastDateTime: any, response: any, lineNo: number = 1;
+                lastDateTime: any, response: any, lineNo: number = 1, dataSize: number = -1;
             // drones.forEach(async drone => {
             for (let drone of drones) {
                 mission = drone['drone_id'];
@@ -135,6 +128,8 @@ export async function getData() {
 
                         for (let dataSet of droneAccess['data_set']) {
                             logger.info(`\t${dataSet}`);
+
+                            dataSize = -1;
 
                             // Prepare the path for the masterFullPath for the csv file for this mission/dataset
                             let masterFilename = mission + '_' + dataSet + '.csv';
@@ -153,50 +148,59 @@ export async function getData() {
                             // Pull the mission / dataset time series
                             if (startDate.isValid()) {
 
-                                let timeDiff: number = 40;
+                                let timeDiff: number = 5;
                                 let timeCutoff = moment().tz(timeZone).subtract(timeDiff, "minutes");
                                 logger.info(`\t\ttimeCutoff is ${timeDiff} minutes ago = ${timeCutoff.format()}`);
 
-                                while ((startDate.isValid()) && (startDate.isBefore(timeCutoff))) {
+                                // while ((startDate.isValid()) && (startDate.isBefore(timeCutoff))) {
+                                while ((startDate.isValid()) && (dataSize !== 0)) {
 
                                     logger.info(`\t\tstartDate = ${startDate.format()}`);
 
                                     response = await getTimeSeriesData(authToken['token'], mission, dataSet, startDate.format());
                                     if (response === null) {
+                                        dataSize = 0;
                                         logger.info(`\tdata not available for mission ${mission} ${dataSet}, skipping...`);
                                         continue;
                                     }
                                     logger.info(`\t\tsizes, metadata: ${Object.keys(response['meta']).length}, data: ${Object.keys(response['data']).length}`);                
+                                    dataSize = Object.keys(response['data']).length;
 
                                     // Process the data
                                     let data = response['data'];
+
                                     if (Object.keys(data).length !== 0) {
 
                                         // Convert the Epoch time to the format defined in parameters.ts
                                         data = await data.filter((x: any) => {
-                                            return moment.unix(x['gps_time']).tz(timeZone).isValid();
+                                            // logger.info(`len = ${Object.keys(x).length} >>> ${JSON.stringify(x)}`)
+                                            try {
+                                                return ('gps_time' in x) &&
+                                                    moment.unix(x['gps_time']).tz(timeZone).isValid() &&
+                                                    moment.unix(x['gps_time']).tz(timeZone).isAfter('2012-01-01');
+                                            } catch {
+                                                return false;
+                                            }
                                         }).map((y: any) => {
                                             y['gps_time'] = moment.unix(y['gps_time']).tz(timeZone).format(timeOutputFormat);
                                             return y;
                                         });
+                                        dataSize = data.length;
+                                        if (dataSize > 0) {
 
-                                        // data = await data.map((x: any) => {
-                                        //     x['gps_time'] = moment.unix(x['gps_time']).tz(timeZone).format(timeOutputFormat);
-                                        //     return x;
-                                        // })
+                                            // Convert the JSON data to a csv - csv will include the columns headers
+                                            let csv = await json2csv.parse(data);
 
-                                        // Convert the JSON data to a csv - csv will include the columns headers
-                                        let csv = await json2csv.parse(data);
-
-                                        // Append the current data to the master file if it exists, otherwise create a new file
-                                        if (existsSync(masterFullPath)) {
-                                            // Drop the first line of header information if the csv file exists (i.e. don't duplicate headers)
-                                            csv = "\n" + csv.substring(csv.indexOf("\n") + 1);
-                                        }
-                                        try {
-                                            appendFileSync(masterFullPath, csv);
-                                        } catch (e) {
-                                            logger.error(`Error writing to data file: ${e}`);
+                                            // Append the current data to the master file if it exists, otherwise create a new file
+                                            if (existsSync(masterFullPath)) {
+                                                // Drop the first line of header information if the csv file exists (i.e. don't duplicate headers)
+                                                csv = "\n" + csv.substring(csv.indexOf("\n") + 1);
+                                            }
+                                            try {
+                                                appendFileSync(masterFullPath, csv);
+                                            } catch (e) {
+                                                logger.error(`Error writing to data file: ${e}`);
+                                            }
                                         }
                                     }
 
@@ -241,65 +245,13 @@ export async function getData() {
                             }
                         }
                     }
-                }                    
-                // logger.info(`\tmission ${mission} data files written`);
+                }
             }
             logger.info('Data pull completed');
 
             // Delete the old zip file if it exists
             if (existsSync(path.join(__dirname, outputFolder, "all_data.zip"))) {
                 unlinkSync(path.join(__dirname, outputFolder, "all_data.zip"));
-            }
-
-            let globDir: string = '';
-            if (__dirname === '/root/SaildroneTS') {
-                // globDir = path.join('SaildroneTS', outputFolder);
-                globDir = path.join(__dirname, outputFolder);
-                // globDir = path.join(cwd(), outputFolder);
-            } else {
-                globDir = outputFolder;
-            }
-
-            // logger.info(`\n__dirname = ${__dirname}\nglobDir = ${globDir}\ncwd = ${cwd()}`);
-
-            // Create tar file
-            let createTar: boolean = false;
-            if (createTar) {
-                tar.c(
-                    {
-                        file: 'all_data.tar',
-                        sync: true,
-                        cwd: outputFolder
-                    },
-                    ['']
-                );
-                logger.info(`Tar file written`);
-            }
-
-            // Generate the zip file
-            let zip: boolean = false;
-            if (zip) {
-
-                logger.info(`Creating new all_data.zip file`);
-                let zipFile = new yazl.ZipFile();
-
-                // Get a listing of all of the files of interest and add to the zip file
-                let csvFiles = fg.sync([
-                    globDir + '/**/*.csv', 
-                    globDir + '/**/*.json'], {nocase: true, deep: 0}
-                );
-                logger.info(`csvFiles = ${csvFiles}`);
-
-                csvFiles.forEach(async (x) => {
-                    await zipFile.addFile(x, x.split("/").pop());
-                    logger.info(`\tzipping ${x}`)
-                })
-
-                // Finalize the zip file
-                zipFile.outputStream.pipe(createWriteStream(path.join(__dirname, outputFolder, "all_data.zip"))).on("close", function() {
-                    logger.info("Zip file written\n");
-                });
-                zipFile.end();
             }
         }
     }
