@@ -25,8 +25,6 @@ build: Dockerfile
 extract:
 	make build
 
-	docker inspect saildrone-data-pull-deploy
-
 	##### make container + extract tarball #####
 	-docker rm -f ${docker_image}
 	docker create --name ${docker_image} ${docker_image}
