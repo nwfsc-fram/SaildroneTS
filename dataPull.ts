@@ -203,7 +203,7 @@ export async function getData() {
                                                 logger.error(`Error writing to data file: ${e}`);
                                             }
                                         } else if (dataSize === 0) {
-                                            logger.info(`dataSize is zero after filtering, finished with ${mission} ${dataSet}`);
+                                            logger.info(`\t\tdataSize is zero after filtering, finished with ${mission} ${dataSet}`);
                                         }
                                     }
 
