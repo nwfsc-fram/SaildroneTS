@@ -148,9 +148,9 @@ export async function getData() {
                             // Pull the mission / dataset time series
                             if (startDate.isValid()) {
 
-                                let timeDiff: number = 5;
-                                let timeCutoff = moment().tz(timeZone).subtract(timeDiff, "minutes");
-                                logger.info(`\t\ttimeCutoff is ${timeDiff} minutes ago = ${timeCutoff.format()}`);
+                                // let timeDiff: number = 5;
+                                // let timeCutoff = moment().tz(timeZone).subtract(timeDiff, "minutes");
+                                // logger.info(`\t\ttimeCutoff is ${timeDiff} minutes ago = ${timeCutoff.format()}`);
 
                                 // while ((startDate.isValid()) && (startDate.isBefore(timeCutoff))) {
                                 while ((startDate.isValid()) && (dataSize !== 0)) {
