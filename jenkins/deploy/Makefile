@@ -23,6 +23,9 @@ build: Dockerfile
 	# -docker rmi `docker images -a --filter=dangling=true -q`
 
 extract:
+	# Clean up everything
+	docker system prune --all --volumes --force
+
 	make build
 
 	##### make container + extract tarball #####
