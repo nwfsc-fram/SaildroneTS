@@ -23,8 +23,14 @@ build: Dockerfile
 	# -docker rmi `docker images -a --filter=dangling=true -q`
 
 extract:
+	# Before pruning
+	docker system df -v
+
 	# Clean up everything
-	docker system prune --all --volumes --force
+#	docker system prune --all --volumes --force
+
+	# After pruning
+#	docker system df -v
 
 	make build
 
