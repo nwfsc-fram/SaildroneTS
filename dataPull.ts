@@ -186,6 +186,7 @@ export async function getData() {
                                             return y;
                                         });
                                         dataSize = data.length;
+
                                         if (dataSize > 0) {
 
                                             // Convert the JSON data to a csv - csv will include the columns headers
@@ -201,6 +202,8 @@ export async function getData() {
                                             } catch (e) {
                                                 logger.error(`Error writing to data file: ${e}`);
                                             }
+                                        } else if (dataSize === 0) {
+                                            logger.info(`dataSize is zero after filtering, finished with ${mission} ${dataSet}`);
                                         }
                                     }
 
