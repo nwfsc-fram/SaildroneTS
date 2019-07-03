@@ -160,7 +160,7 @@ export async function getData() {
                                     response = await getTimeSeriesData(authToken['token'], mission, dataSet, startDate.format());
                                     if (response === null) {
                                         dataSize = 0;
-                                        logger.info(`\tdata not available for mission ${mission} ${dataSet}, skipping...`);
+                                        logger.info(`\t\tdata not available for mission ${mission} ${dataSet}, skipping...`);
                                         continue;
                                     }
                                     logger.info(`\t\tsizes, metadata: ${Object.keys(response['meta']).length}, data: ${Object.keys(response['data']).length}`);                
