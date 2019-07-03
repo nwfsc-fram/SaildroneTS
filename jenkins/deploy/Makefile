@@ -60,7 +60,8 @@ extract:
 	docker images
 
 	# Clean up dangling images (i.e. the non-intermediate none:none images)
-	docker rmi $(docker images -f "dangling=true" -q --no-trunc) 2>/dev/null
+	# docker rmi $(docker images -f "dangling=true" -q --no-trunc) 2>/dev/null
+	docker image prune --force
 
 	# Show docker images after removing dangling images
 	docker images
