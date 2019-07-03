@@ -38,13 +38,13 @@ extract:
 	# docker system df -v
 
 	# Remove all untagged images 
-	docker images | grep "^<none>" | awk '{ print $"3"; }' | xargs docker rmi
+	# docker images | grep "^<none>" | awk '{ print $"3"; }' | xargs docker rmi
 	# docker rmi $(docker images | grep "^<none>" | awk '{print $3}')
 
 	make build
 
 	##### make container + extract tarball #####
-	-docker rm -f ${docker_image}
+	# -docker rm -f ${docker_image}
 	docker create --name ${docker_image} ${docker_image}
 
 	##### copy results #####
@@ -55,6 +55,15 @@ extract:
 
 	##### clean up #####
 	docker rm -f ${docker_image}
+
+	# Show docker images before removing dangling images
+	docker images
+
+	# Clean up dangling images (i.e. the non-intermediate none:none images)
+	docker rmi $(docker images -f "dangling=true" -q --no-trunc) 2>/dev/null
+
+	# Show docker images after removing dangling images
+	docker images
 
 debug:
 	make build

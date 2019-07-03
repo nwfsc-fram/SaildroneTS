@@ -22,16 +22,18 @@ build: Dockerfile
 	# -docker rmi --force `docker images -f 'dangling=true' -q`
 
 extract:
+
+	make build
+
+	# List out what docker images exist (but not the intermediate ones)
 	docker images
 	# docker system df -v
 
 	# Clean up everything
 	# docker system prune --all --volumes --force
 
-	make build
-
 	## make container + extract tarball
-	-docker rm -f ${docker_image}
+	# docker rm -f ${docker_image}
 	docker create --name ${docker_image} ${docker_image}
 
 	# TODO: Copy versioning files
