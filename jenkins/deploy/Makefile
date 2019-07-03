@@ -18,7 +18,12 @@ build: Dockerfile
     # make room for build
 	#-docker rm `docker ps -a -q` # delete old/stopped containers
 	# build container
+	
 	docker build --no-cache=true -t ${docker_image} .
+
+	# No Cache
+	# docker build -t ${docker_image} .
+
 	# remove old build
 	# -docker rmi `docker images -a --filter=dangling=true -q`
 
@@ -33,7 +38,7 @@ extract:
 	# docker system df -v
 
 	# Remove all untagged images 
-	docker images | grep "^<none>" | awk '{ print $3; }' | xargs docker rmi
+	docker images | grep "^<none>" | awk '{ print $"3"; }' | xargs docker rmi
 	# docker rmi $(docker images | grep "^<none>" | awk '{print $3}')
 
 	make build
