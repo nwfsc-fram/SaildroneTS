@@ -32,6 +32,9 @@ extract:
 	# After pruning
 	# docker system df -v
 
+	# Remove all untagged images 
+	docker rmi $(docker images | grep "^<none>" | awk "{print $3}")
+
 	make build
 
 	##### make container + extract tarball #####

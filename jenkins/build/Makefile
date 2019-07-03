@@ -26,10 +26,10 @@ extract:
 	docker system df -v
 
 	# Clean up everything
-	docker system prune --all --volumes --force
+	# docker system prune --all --volumes --force
 
 	# After pruning
-	docker system df -v
+	# docker system df -v
 
 	make build
 
