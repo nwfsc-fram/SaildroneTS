@@ -12,6 +12,4 @@ Software for querying the [Saildrone](https://www.saildrone.com/) API.  Saildron
 
 5. Copy the `keys-sample.ts` file to a `keys.ts` file and insert your key and secret values provided by Saildrone.
 
-6. Edit the `parameters.ts` file to enter your specific Saildrone missions (`missions` parameter) and datasets of interest (`datasets` parameter)
-
-7. Run the software:  `ts-node -T ./dataPull.ts`
+6. Run the software:  `ts-node -T ./dataPull.ts`
