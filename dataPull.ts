@@ -105,7 +105,7 @@ export async function getData() {
 
             // Get Accesses
             let accesses = await getAccesses(authToken['token']);
-            let drones: any = null, droneAccess: any = null, startDate: any = null;
+            let drones: any = null, droneAccesses: any = null, startDate: any = null;
             if ((accesses["data"] !== null) && (accesses["data"]["access"] !== null)) {
                 drones = accesses["data"]["access"];
             }
@@ -121,9 +121,8 @@ export async function getData() {
                 logger.info(`Pulling mission ${mission} data...`);
 
                 if (drones !== null) {
-                    droneAccess = drones.filter((d: any) => d['drone_id'] === mission);
-                    if (droneAccess.length === 1) {
-                        droneAccess = droneAccess[0];
+                    droneAccesses = drones.filter((d: any) => d['drone_id'] === mission);
+                    for (let droneAccess of droneAccesses) {
                         logger.info(`\taccess = ${JSON.stringify(droneAccess)}`);
 
                         for (let dataSet of droneAccess['data_set']) {
