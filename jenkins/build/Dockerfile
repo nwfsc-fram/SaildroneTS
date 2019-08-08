@@ -21,8 +21,9 @@ RUN cd SaildroneTS && npm install
 # RUN ls -lha
 
 # Package saildrone-data-pull directory
-RUN tar -cvzf saildrone-data-pull.tgz SaildroneTS --warning=no-file-changed \
-    --exclude='./.npm' --exclude='./logs' --exclude='./.git' \
-    --exclude='./.config' --exclude='./.gnupg' --exclude='./output'
+RUN tar -cvzf saildrone-data-pull.tgz SaildroneTS 
+#--warning=no-file-changed \
+#    --exclude='./.npm' --exclude='./logs' --exclude='./.git' \
+#    --exclude='./.config' --exclude='./.gnupg' --exclude='./output'
 
 # RUN ls -lha
