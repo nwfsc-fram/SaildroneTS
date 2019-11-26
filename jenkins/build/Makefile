@@ -43,8 +43,8 @@ extract:
 	docker rm -f ${docker_image}
 
 clean:
-	# WS- Run sparingly, kills builds in process
-	-docker rm -f ${docker_image}
-	-docker rmi -f ${docker_image}
-	-docker rmi -f `docker images -f 'dangling=true' -q`
-	-docker rm `docker ps -a -q`
+	#-docker rm -f ${docker_image}
+	#-docker rmi -f ${docker_image}
+	#-docker rmi -f `docker images -f 'dangling=true' -q`
+	#-docker rm `docker ps -a -q`
+	docker container prune -f

@@ -18,7 +18,7 @@ build: Dockerfile
     # make room for build
 	#-docker rm `docker ps -a -q` # delete old/stopped containers
 	# build container
-	
+
 	docker build --no-cache=true -t ${docker_image} .
 
 	# No Cache
@@ -37,7 +37,7 @@ extract:
 	# After pruning
 	# docker system df -v
 
-	# Remove all untagged images 
+	# Remove all untagged images
 	# docker images | grep "^<none>" | awk '{ print $"3"; }' | xargs docker rmi
 	# docker rmi $(docker images | grep "^<none>" | awk '{print $3}')
 
@@ -74,7 +74,8 @@ debug:
 	docker exec -it ${docker_image} bash && docker kill ${docker_image} && docker rm ${docker_image}
 
 clean:
-	-docker rm -f ${docker_image}
-	-docker rmi -f ${docker_image}
-	-docker rmi -f `docker images -f 'dangling=true' -q`
-	-docker rm `docker ps -a -q`
+	#-docker rm -f ${docker_image}
+	#-docker rmi -f ${docker_image}
+	#-docker rmi -f `docker images -f 'dangling=true' -q`
+	#-docker rm `docker ps -a -q`
+	docker container prune -f
