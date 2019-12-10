@@ -57,21 +57,16 @@ extract:
 	docker rm -f ${docker_image}
 
 	# Show docker images before removing dangling images
-	docker images
+	# docker images
 
 	# Clean up dangling images (i.e. the non-intermediate none:none images)
 	# docker rmi $(docker images -f "dangling=true" -q --no-trunc) 2>/dev/null
-	docker image prune --force
+	# docker image prune --force
+
+	-docker container prune --force
 
 	# Show docker images after removing dangling images
 	docker images
-
-debug:
-	make build
-	# create a container
-	-docker rm -f ${docker_image}
-	docker run -d --name ${docker_image} ${docker_image} /bin/sh -c "while true; do sleep 99; done"
-	docker exec -it ${docker_image} bash && docker kill ${docker_image} && docker rm ${docker_image}
 
 clean:
 	#-docker rm -f ${docker_image}
