@@ -15,6 +15,7 @@ docker_image = node-${docker_image_suffix}
 build: Dockerfile
     # make room for build
 	-docker container prune --force
+	-docker rm -f ${docker_image}
 	# -docker rm -f `docker ps -a -q` # delete old/stopped containers
 	# build container
 	docker build -t ${docker_image} .
@@ -40,7 +41,7 @@ extract:
 	docker cp ${docker_image}:/root/saildrone-data-pull.tgz .
 
 	# clean up
-	docker rm -f ${docker_image}
+	#docker rm -f ${docker_image}
 
 clean:
 	#-docker rm -f ${docker_image}
