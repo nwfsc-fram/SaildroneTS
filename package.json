@@ -33,7 +33,7 @@
     "json2csv": "^4.4.1",
     "jszip": "^3.2.1",
     "log4js": "^4.1.0",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "moment-timezone": "^0.5.23",
     "node-cron": "^2.0.3",
     "yazl": "^2.5.1"
