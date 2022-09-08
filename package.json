@@ -31,7 +31,7 @@
     "eslint": "^5.16.0",
     "fast-glob": "^2.2.7",
     "json2csv": "^4.4.1",
-    "jszip": "^3.2.1",
+    "jszip": "^3.7.0",
     "log4js": "^4.1.0",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.23",
